@@ -14,6 +14,8 @@ const ShopContextProvider = ({ children }) => {
         delivery_fee,
         search,
         setSearch,
+        showSearch,
+        setShowSearch
     }
 return (
     <ShopContext.Provider value={value}>

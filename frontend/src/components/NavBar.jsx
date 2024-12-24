@@ -1,19 +1,31 @@
-import React, { useState } from 'react';
-import { useLocation, Link, NavLink } from 'react-router-dom';
+import React, { useContext, useState } from 'react';
+import { useLocation, Link, NavLink, useNavigate } from 'react-router-dom';
 import { assets } from '../assets/assets';
 import SearchIcon from '@mui/icons-material/Search';
 import PersonIcon from '@mui/icons-material/Person';
 import LocalMallIcon from '@mui/icons-material/LocalMall';
 import MenuIcon from '@mui/icons-material/Menu';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import { ShopContext } from '../context/ShopContext';
 
 const NavBar = () => {
   const [visible, setVisible] = useState(false);
-  const location = useLocation(); // To get the current pathname
+  const location = useLocation();
+  const navigate = useNavigate();
+  const { setShowSearch } = useContext(ShopContext);
 
+  // Highlight current nav link
   const getHrStyle = (path) => ({
     display: location.pathname === path ? 'block' : 'none',
   });
+
+  // Handle Search Icon Click
+  const handleSearchClick = () => {
+    setShowSearch(true);
+    if (!location.pathname.includes('/collection')) {
+      navigate('/collection'); // Redirect to the collection page
+    }
+  };
 
   return (
     <div className="flex items-center justify-between font-medium mb-3 bg-dark px-4 sm:px-6">
@@ -84,6 +96,7 @@ const NavBar = () => {
       <div className="flex items-center gap-4 md:gap-6">
         {/* Search icon */}
         <SearchIcon
+          onClick={handleSearchClick}
           sx={{
             cursor: 'pointer',
             color: '#CFC4B9',
@@ -102,7 +115,6 @@ const NavBar = () => {
               '&:hover': { color: '#C5A253' },
             }}
           />
-          {/* Profile dropdown menu */}
           <div className="group-hover:block hidden absolute dropdown-menu right-0 pt-4">
             <div className="flex flex-col gap-3 px-5 w-36 py-5 bg-lighterDark text-gold rounded-lg shadow-lg">
               <p className="cursor-pointer hover:text-champagne text-lg border-b border-white pb-3 transition duration-300 ease-in-out">
@@ -150,44 +162,44 @@ const NavBar = () => {
         </div>
       </div>
 
-      {/* Sidebar menu for small screen */}
+      {/* Sidebar menu for small screens */}
       <div
-        className={`absolute top-0 right-0 overflow-hidden bg-lighterDark transition-all duration-300 ease-in-out ${
-          visible ? 'w-full h-full' : 'w-0 h-0'
-        }`}
+        className={`absolute top-0 right-0 bg-lighterDark transition-all duration-300 ease-in-out ${
+          visible ? 'w-3/4 h-full' : 'w-0 h-0'
+        } overflow-hidden`}
       >
-        <div className="flex flex-col text-gold hover:text-champagne transition-colors duration-200 ease-in-out">
+        <div className="flex flex-col text-gold">
           <div onClick={() => setVisible(false)} className="flex items-center gap-4 p-3 cursor-pointer">
             <ArrowBackIcon
               sx={{
-                fontSize: { xs: '1.7rem', sm: '2rem', md: '2.2rem' }, // Responsive sizes
+                fontSize: { xs: '1.7rem', sm: '2rem', md: '2.2rem' },
               }}
             />
             <p className="text-xl">Back</p>
           </div>
           <NavLink
-            onClick={() => setVisible(false)} 
+            onClick={() => setVisible(false)}
             className="py-2 pl-6 hover:text-champagne transition-colors duration-200 ease-in-out"
             to="/"
           >
             HOME
           </NavLink>
           <NavLink
-            onClick={() => setVisible(false)} 
+            onClick={() => setVisible(false)}
             className="py-2 pl-6 hover:text-champagne transition-colors duration-200 ease-in-out"
             to="/collection"
           >
             COLLECTION
           </NavLink>
           <NavLink
-            onClick={() => setVisible(false)} 
+            onClick={() => setVisible(false)}
             className="py-2 pl-6 hover:text-champagne transition-colors duration-200 ease-in-out"
             to="/about"
           >
             ABOUT
           </NavLink>
           <NavLink
-            onClick={() => setVisible(false)} 
+            onClick={() => setVisible(false)}
             className="py-2 pl-6 hover:text-champagne transition-colors duration-200 ease-in-out"
             to="/contact"
           >

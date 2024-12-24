@@ -3,8 +3,9 @@ import { ShopContext } from '../context/ShopContext'
 import { assets } from '../assets/assets'
 import Title from '../components/Title'
 import ProductItem from '../components/ProductItem'
+import SearchBar from '../components/SearchBar'
 const Collection = () => {
-  const {products} = useContext(ShopContext)
+  const {products,search,showSearch} = useContext(ShopContext)
   const[showFilter,setShowFilter] = useState(false)
   const [filterProduct, setFilterProduct] = useState([]);
   const [category, setCategory] = useState([]);
@@ -32,7 +33,9 @@ const toggleSubCategory = (e) => {
 
 const applyFilter = () => {
   let productsCopy = products.slice();
-
+  if (showSearch && search) {
+    productsCopy = productsCopy.filter((product) => product.name.toLowerCase().includes(search.toLowerCase()));
+  }
   // Filter by category
   if (category.length > 0) {
     productsCopy = productsCopy.filter((item) => category.includes(item.category));
@@ -44,7 +47,6 @@ const applyFilter = () => {
       subCategory.includes(item.subCategory) // Compare the subCategory as a string
     );
   }
-
   setFilterProduct(productsCopy);
 };
 
@@ -72,11 +74,11 @@ const sortProduct = () => {
 
 useEffect(() => {
   applyFilter();  // Filter products when category or subcategory change
-}, [category, subCategory]);
+}, [category, subCategory,search,showSearch]);  // Add applyFilter as a dependency
 
 useEffect(() => {
   sortProduct();  // Sort products when sortType changes
-}, [sortType, filterProduct]);  // Add filterProduct as a dependency
+}, [sortType]);  // Add filterProduct as a dependency
 
   return (
     <div className='flex flex-col sm:flex-row gap-1 sm:gap-10 pt-10 border-t border-gold'>
@@ -150,7 +152,7 @@ useEffect(() => {
 <div className='grid grid-cols-1 md:grid-cols-3 lg:grid-cold-4 gap-3 gap-y-6'>
   {
     filterProduct.map((item,index)=>(
-      <ProductItem key={index} id={item.name} name={item.name} subCategory={item.subCategory} price={item.price} image={item.image} />
+      <ProductItem key={index} id={item.id} name={item.name} subCategory={item.subCategory} price={item.price} image={item.image} />
     ))
   }
 </div>
