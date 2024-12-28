@@ -11,8 +11,9 @@ const Footer = () => {
           <div className="flex flex-col items-start">
             <img src={assets.logo} className="mb-5 w-32" alt="logo" />
             <p className="text-base md:w-2/3 text-lightGray">
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-            </p>
+  "At Gaberina, we celebrate your individuality with fragrances as unique and timeless as you."
+</p>
+
           </div>
           
           {/* Middle Section: Company Links */}

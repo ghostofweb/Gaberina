@@ -12,7 +12,7 @@ const NavBar = () => {
   const [visible, setVisible] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
-  const { setShowSearch } = useContext(ShopContext);
+  const { setShowSearch , getCartCount} = useContext(ShopContext);
 
   // Highlight current nav link
   const getHrStyle = (path) => ({
@@ -96,6 +96,7 @@ const NavBar = () => {
       <div className="flex items-center gap-4 md:gap-6">
         {/* Search icon */}
         <SearchIcon
+    
           onClick={handleSearchClick}
           sx={{
             cursor: 'pointer',
@@ -107,31 +108,35 @@ const NavBar = () => {
 
         {/* Profile dropdown */}
         <div className="group relative">
-          <PersonIcon
-            sx={{
-              cursor: 'pointer',
-              color: '#CFC4B9',
-              fontSize: { xs: '1.5rem', sm: '1.8rem', md: '2rem' }, // Responsive sizes
-              '&:hover': { color: '#C5A253' },
-            }}
-          />
-          <div className="group-hover:block hidden absolute dropdown-menu right-0 pt-4">
-            <div className="flex flex-col gap-3 px-5 w-36 py-5 bg-lighterDark text-gold rounded-lg shadow-lg">
-              <p className="cursor-pointer hover:text-champagne text-lg border-b border-white pb-3 transition duration-300 ease-in-out">
-                My Profile
-              </p>
-              <p className="cursor-pointer hover:text-champagne text-lg border-b border-white pb-3 transition duration-300 ease-in-out">
-                Orders
-              </p>
-              <p className="cursor-pointer hover:text-champagne text-lg border-b border-white pb-3 transition duration-300 ease-in-out">
-                Wishlist
-              </p>
-              <p className="cursor-pointer hover:text-champagne text-lg border-b border-white pb-3 transition duration-300 ease-in-out">
-                Logout
-              </p>
-            </div>
-          </div>
-        </div>
+  <PersonIcon
+    sx={{
+      cursor: 'pointer',
+      color: '#CFC4B9',
+      fontSize: { xs: '1.5rem', sm: '1.8rem', md: '2rem' }, // Responsive sizes
+      '&:hover': { color: '#C5A253' },
+    }}
+  />
+  <div
+    className="group-hover:block hidden absolute dropdown-menu right-0 pt-4"
+    style={{ zIndex: 50 }} // Ensures it floats above other elements
+  >
+    <div className="flex flex-col gap-3 px-5 w-36 py-5 bg-lighterDark text-gold rounded-lg shadow-lg">
+      <p className="cursor-pointer hover:text-champagne text-lg border-b border-white pb-3 transition duration-300 ease-in-out">
+        My Profile
+      </p>
+      <p className="cursor-pointer hover:text-champagne text-lg border-b border-white pb-3 transition duration-300 ease-in-out">
+        Orders
+      </p>
+      <p className="cursor-pointer hover:text-champagne text-lg border-b border-white pb-3 transition duration-300 ease-in-out">
+        Wishlist
+      </p>
+      <p className="cursor-pointer hover:text-champagne text-lg border-b border-white pb-3 transition duration-300 ease-in-out">
+        Logout
+      </p>
+    </div>
+  </div>
+</div>
+
 
         {/* Cart icon */}
         <Link to="/cart" className="relative">
@@ -144,7 +149,7 @@ const NavBar = () => {
             }}
           />
           <p className="absolute -right-2 -bottom-2 flex items-center justify-center w-6 h-5 bg-gold text-dark font-bold rounded-full text-xs border-2 border-white shadow-md">
-            10
+            {getCartCount()}
           </p>
         </Link>
 

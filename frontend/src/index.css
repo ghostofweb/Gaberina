@@ -3,7 +3,14 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Add this to your global CSS file */
+
+.Toastify__close-button {
+  color: #D4AF37 !important; /* Gold color */
+}
+
+.Toastify__close-button:hover {
+  color: #CFC4B9 !important; /* Lighter gold on hover */
+}
 
 body {
     font-family: 'Montserrat', sans-serif;

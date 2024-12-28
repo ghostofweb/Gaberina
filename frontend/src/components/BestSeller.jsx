@@ -25,7 +25,16 @@ const LatestCollection = () => {
       <div className='grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 gap-y-6'>
     {
       bestSellers.map((item,index)=>(
-       <ProductItem key={index} id={item.id} image={item.image} name={item.name} price={item.price} subCategory={item.subCategory} />
+        <ProductItem
+        key={index}
+        id={item.id}
+        name={item.name}
+        subCategory={item.subCategory}
+        price={item.price} // Pass the 50ml price
+        image={item.image}
+        fragranceNotes={item.fragranceNotes} // Add fragranceNotes here
+      />
+      
       ))
     }
       </div>
