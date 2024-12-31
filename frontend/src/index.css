@@ -12,6 +12,12 @@
   color: #CFC4B9 !important; /* Lighter gold on hover */
 }
 
+/* Example for loading spinner */
+.loading-line {
+  border-top: 4px solid #D4AF37; /* Gold color for the loading line */
+  animation: spin 2s linear infinite; /* Example animation */
+}
+
 body {
     font-family: 'Montserrat', sans-serif;
     background-color: #1E1E1E;

@@ -1,4 +1,4 @@
-import { createContext, useEffect, useState } from "react";
+import React, { createContext, useState, useEffect, useMemo } from "react";
 import { products } from "../assets/assets";
 import { toast } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
@@ -8,9 +8,10 @@ export const ShopContext = createContext();
 const ShopContextProvider = ({ children }) => {
     const currency = '₹';
     const delivery_fee = 150;
+    const [cartItems, setCartItems] = useState({});
+    const [total, setTotal] = useState(0);  // Add total state
     const [search, setSearch] = useState('');
     const [showSearch, setShowSearch] = useState(true);
-    const [cartItems, setCartItems] = useState({});
 
     // Load cart items from localStorage on component mount
     useEffect(() => {
@@ -22,14 +23,26 @@ const ShopContextProvider = ({ children }) => {
 
     // Save cart items to localStorage whenever cartItems changes
     useEffect(() => {
-        if (cartItems && Object.keys(cartItems).length > 0) {
-            localStorage.setItem('getItems', JSON.stringify(cartItems));
-        }
+        localStorage.setItem('getItems', JSON.stringify(cartItems));
+        // Recalculate total when cartItems change
+        setTotal(calculateTotal(cartItems));
     }, [cartItems]);
 
-    const addToCart = async (itemId, size) => {
+    const calculateTotal = (cartData) => {
+        let subtotal = 0;
+        for (const itemId in cartData) {
+            for (const size in cartData[itemId]) {
+                const product = products.find((prod) => prod.id === itemId);
+                if (product && product.price[size]) {
+                    subtotal += product.price[size] * cartData[itemId][size];
+                }
+            }
+        }
+        return subtotal + delivery_fee; // Include delivery fee in total
+    };
+
+    const addToCart = (itemId, size) => {
         if (!size) {
-            // Display toast notification if size is not selected
             toast.error('Please select the size', {
                 position: 'top-right',
                 className: 'custom-toast',
@@ -42,12 +55,8 @@ const ShopContextProvider = ({ children }) => {
             return;
         }
 
-        // Add item to the cart
-        let cartData = structuredClone(cartItems);
+        const cartData = structuredClone(cartItems);
         const product = products.find((prod) => prod.id === itemId);
-
-        console.log("Product to add:", product); // Log product info
-        console.log("Selected Size:", size); // Log the selected size
 
         if (cartData[itemId]) {
             if (cartData[itemId][size]) {
@@ -56,19 +65,15 @@ const ShopContextProvider = ({ children }) => {
                 cartData[itemId][size] = 1;
             }
         } else {
-            cartData[itemId] = {};
-            cartData[itemId][size] = 1;
+            cartData[itemId] = { [size]: 1 };
         }
-
-        console.log("Updated Cart Data:", cartData); // Log the updated cart
 
         setCartItems(cartData);
 
-        // Display success toast with product info
         toast.success(
             <div style={{ display: 'flex', alignItems: 'center' }}>
                 <img
-                    src={product.image[0]} // Access the first image from the imported array variable
+                    src={product.image[0]}
                     alt={product.name}
                     style={{ width: '40px', height: '40px', marginRight: '10px' }}
                 />
@@ -85,46 +90,58 @@ const ShopContextProvider = ({ children }) => {
                 pauseOnHover: true,
                 draggable: true,
                 style: {
-                    backgroundColor: '#1E1E1E', // Dark Charcoal background
-                    color: '#FDFBF6', // Ivory White color for text
+                    backgroundColor: '#1E1E1E',
+                    color: '#FDFBF6',
                     fontFamily: 'Lato, sans-serif',
-                    border: '1px solid #D4AF37CC', // Button Hover Gold for the border
+                    border: '1px solid #D4AF37CC',
                     borderRadius: '8px',
                     padding: '10px',
                 },
-                icon: '🛒', // Custom icon for success
+                icon: '🛒',
             }
         );
     };
 
-    const getCartCount = () => {
-        let totalCount = 0;
-        for (const items in cartItems) {
-            for (const item in cartItems[items]) {
-                try {
-                    if (cartItems[items][item] > 0) {
-                        totalCount += cartItems[items][item];
-                    }
-                } catch (error) {
-                    console.error("Error calculating total count:", error);
-                }
+    const removeFromCart = (itemId, size) => {
+        const cartData = structuredClone(cartItems);
+        if (cartData[itemId] && cartData[itemId][size]) {
+            cartData[itemId][size] -= 1;
+            if (cartData[itemId][size] <= 0) {
+                delete cartData[itemId][size];
+            }
+            if (Object.keys(cartData[itemId]).length === 0) {
+                delete cartData[itemId];
             }
         }
-        return totalCount;
+
+        setCartItems(cartData);
     };
 
+    const clearCart = () => {
+        setCartItems({});
+    };
+
+    const cartCount = useMemo(() => {
+        return Object.values(cartItems).reduce((total, itemSizes) => {
+            return total + Object.values(itemSizes).reduce((sizeTotal, count) => sizeTotal + count, 0);
+        }, 0);
+    }, [cartItems]);
+
     const value = {
-        products: products,
+        products,
         currency,
         delivery_fee,
+        cartItems,
+        setCartItems,
+        addToCart,
+        removeFromCart,
+        clearCart,
+        cartCount,
+        total,  // Add total to the context
         search,
         setSearch,
         showSearch,
         setShowSearch,
-        addToCart,
-        cartItems,
-        setCartItems,
-        getCartCount
     };
 
     return (

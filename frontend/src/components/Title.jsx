@@ -10,7 +10,7 @@ const Title = ({ text1, text2 }) => {
       transition={{ duration: 2.3, ease: [0.25, 0.8, 0.25, 1] }}
       viewport={{ once: true, amount: 1 }}
     >
-      <p className="text-grey-500 font-times font-bold text-gold">
+      <p className="text-grey-500 font-times font-bold text-gold ">
         {text1}{' '}
         <span className="text-buttontxt font-medium">{text2}</span>
       </p>

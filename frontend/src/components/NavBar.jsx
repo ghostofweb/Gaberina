@@ -12,7 +12,7 @@ const NavBar = () => {
   const [visible, setVisible] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
-  const { setShowSearch , getCartCount} = useContext(ShopContext);
+  const { setShowSearch , cartCount} = useContext(ShopContext);
 
   // Highlight current nav link
   const getHrStyle = (path) => ({
@@ -130,9 +130,11 @@ const NavBar = () => {
       <p className="cursor-pointer hover:text-champagne text-lg border-b border-white pb-3 transition duration-300 ease-in-out">
         Wishlist
       </p>
+      <Link to={"/login"}>
       <p className="cursor-pointer hover:text-champagne text-lg border-b border-white pb-3 transition duration-300 ease-in-out">
         Logout
       </p>
+      </Link>
     </div>
   </div>
 </div>
@@ -140,17 +142,18 @@ const NavBar = () => {
 
         {/* Cart icon */}
         <Link to="/cart" className="relative">
-          <LocalMallIcon
-            sx={{
-              cursor: 'pointer',
-              color: '#CFC4B9',
-              fontSize: { xs: '1.7rem', sm: '2rem', md: '2.2rem' }, // Responsive sizes
-              '&:hover': { color: '#C5A253' },
-            }}
-          />
-          <p className="absolute -right-2 -bottom-2 flex items-center justify-center w-6 h-5 bg-gold text-dark font-bold rounded-full text-xs border-2 border-white shadow-md">
-            {getCartCount()}
-          </p>
+        <LocalMallIcon
+    sx={{
+        cursor: 'pointer',
+        color: '#CFC4B9',
+        fontSize: { xs: '1.7rem', sm: '2rem', md: '2.2rem' },
+        '&:hover': { color: '#C5A253' },
+    }}
+/>
+<p className="absolute -right-2 -bottom-2 flex items-center justify-center w-6 h-5 bg-gold text-dark font-bold rounded-full text-xs border-2 border-white shadow-md">
+    {cartCount}
+</p>
+
         </Link>
 
         {/* Mobile menu icon */}

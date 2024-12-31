@@ -54,7 +54,8 @@ import p_img49 from './p_img49.png'
 import p_img50 from './p_img50.png'
 import p_img51 from './p_img51.png'
 import p_img52 from './p_img52.png'
-
+import gaberina from './gaberina.png'
+import contactImage from './image.png'
 import image from './image.jpg'
 import image2 from './image2.jpg'
 import image3 from './image3.jpg'
@@ -101,7 +102,9 @@ export const assets = {
     image2,
     image3,
     logo2,
-    p_img19
+    p_img19,
+    gaberina,
+    contactImage
 }
 
 export const products = [
