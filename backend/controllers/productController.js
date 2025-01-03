@@ -5,6 +5,7 @@
 
 import {v2 as cloudinary} from 'cloudinary';
 import productModel from '../models/productModel.js';
+import mongoose from 'mongoose';
 
 const addProduct = async (req, res) => {
   try {
@@ -75,7 +76,7 @@ const addProduct = async (req, res) => {
     console.error(error);
     res.status(500).json({
       success: false,
-      message: error.message || 'Internal Server Error',
+      message: error.message || 'Tera Net bakar hai lol',
     });
   }
 };
@@ -100,18 +101,143 @@ try {
 // Funtion for list Product
 const removeProduct = async (req, res) => {
     try {
-        await productModel.findByIdAndDelete(req.body.id);
+      const { id } = req.body;
+  
+      // Validate the ID
+      if (!id || !mongoose.Types.ObjectId.isValid(id)) {
+        return res.status(400).json({
+          success: false,
+          message: 'Invalid product ID.',
+        });
+      }
+  
+      // Check if the product exists
+      const product = await productModel.findById(id);
+  
+      if (!product) {
+        return res.status(404).json({
+          success: false,
+          message: 'Product not found.',
+        });
+      }
+  
+      // Delete the product
+      await productModel.findByIdAndDelete(id);
+  
+      res.json({
+        success: true,
+        message: 'Product removed successfully',
+      });
     } catch (error) {
-        
+      console.error(error);
+      res.status(500).json({
+        success: false,
+        message: error.message || 'Internal Server Error',
+      });
     }
-}
+  };
+  
 // Funtion for single Product
 const singleProduct = async (req, res) => {
-    
-}
+    try {
+      // Extracting productId from the body
+      const { productId } = req.body;
+  
+      // Checking if the productId is provided
+      if (!productId) {
+        return res.status(400).json({
+          success: false,
+          message: "Product ID is required.",
+        });
+      }
+  
+      // Finding the product by productId
+      const product = await productModel.findById(productId);
+  
+      // If the product is not found
+      if (!product) {
+        return res.status(404).json({
+          success: false,
+          message: "Product not found",
+        });
+      }
+  
+      // If product is found
+      res.json({
+        success: true,
+        product,
+      });
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({
+        success: false,
+        message: error.message || "Internal Server Error",
+      });
+    }
+  };
+  
 // Funtion for update Product
 const updateProduct = async (req, res) => {
-    
-}
+    try {
+      // Extract the product ID and data from the request body
+      const { productId, name, description, price, category, subCategory, sizes, bestseller, fragranceNotes } = req.body;
+  
+      // Check if productId is provided
+      if (!productId) {
+        return res.status(400).json({
+          success: false,
+          message: "Product ID is required.",
+        });
+      }
+  
+      // Check if at least one of the fields to update is provided
+      if (!name && !description && !price && !category && !subCategory && !sizes && !fragranceNotes && typeof bestseller !== 'boolean') {
+        return res.status(400).json({
+          success: false,
+          message: "At least one field to update is required.",
+        });
+      }
+  
+      // Find the product by ID
+      const product = await productModel.findById(productId);
+  
+      // If the product doesn't exist
+      if (!product) {
+        return res.status(404).json({
+          success: false,
+          message: "Product not found",
+        });
+      }
+  
+      // Prepare the updated product data
+      const updatedProductData = {
+        name: name || product.name,
+        description: description || product.description,
+        price: price ? JSON.parse(price) : product.price,  // Handle price if provided, otherwise keep the existing one
+        category: category || product.category,
+        subCategory: subCategory || product.subCategory,
+        sizes: sizes ? JSON.parse(sizes) : product.sizes,
+        bestseller: typeof bestseller === 'boolean' ? bestseller : product.bestseller,
+        fragranceNotes: fragranceNotes ? JSON.parse(fragranceNotes) : product.fragranceNotes,
+        date: Date.now(), // Optionally update the date
+      };
+  
+      // Update the product
+      const updatedProduct = await productModel.findByIdAndUpdate(productId, updatedProductData, { new: true });
+  
+      res.json({
+        success: true,
+        message: 'Product updated successfully',
+        product: updatedProduct,
+      });
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({
+        success: false,
+        message: error.message || "Internal Server Error",
+      });
+    }
+  };
+  
 
 export{addProduct,listProduct,removeProduct,singleProduct,updateProduct}

@@ -142,7 +142,21 @@ const registerUser = async (req, res) => {
 
 //Route for Admin Login
 const adminLogin = async (req, res) => {
-
+try {
+    const {email,password} = req.body
+    if(email === process.env.ADMIN_EMAIL && password === process.env.ADMIN_PASSWORD){
+        const token = jwt.sign(email+password,process.env.JWT_SECRET)
+        res.json({success:true,token})
+    }else{
+        res.status(400).json({success:false,error:"Invalid Credentials"})
+    }
+} catch (error) {
+    console.error('Error in Registering User:', error);
+    res.status(500).json({
+        success: false,
+        message: error.message || 'Internal Server Error'
+    });
+}
 }
 
 export {loginUser,registerUser,adminLogin}
