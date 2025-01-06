@@ -8,6 +8,8 @@ import Orders from './pages/Orders';
 import { Update } from '@mui/icons-material';
 import Login from './components/Login';
 import axios from 'axios';
+import 'react-toastify/dist/ReactToastify.css';
+import { ToastContainer, toast } from 'react-toastify';
 
 export const backendUrl = import.meta.env.VITE_BACKEND_URL;
 
@@ -44,6 +46,7 @@ const App = () => {
 
     return (
         <div className='bg-dark min-h-screen'>
+            <ToastContainer/>
             {!token ? (  // If no token, show the Login component
                 <Login />
             ) : (
