@@ -20,11 +20,24 @@ const addProduct = async (req, res) => {
       fragranceNotes,
     } = req.body;
 
-    // Validate required fields
-    if (!name || !description || !price || !category || !subCategory || !sizes || !fragranceNotes) {
+    // Create an array to track missing fields
+    const missingFields = [];
+
+    // Validate required fields and log missing ones
+    if (!name) missingFields.push('name');
+    if (!description) missingFields.push('description');
+    if (!price) missingFields.push('price');
+    if (!category) missingFields.push('category');
+    if (!subCategory) missingFields.push('subCategory');
+    if (!sizes) missingFields.push('sizes');
+    if (!fragranceNotes) missingFields.push('fragranceNotes');
+
+    // If any fields are missing, log and return the error
+    if (missingFields.length > 0) {
+      console.log('Missing fields:', missingFields.join(', ')); // Log the missing fields
       return res.status(400).json({
         success: false,
-        message: "All fields except bestseller are required.",
+        message: `Missing required fields: ${missingFields.join(', ')}`,
       });
     }
 
@@ -80,6 +93,7 @@ const addProduct = async (req, res) => {
     });
   }
 };
+
 
 
 // Funtion for total Product

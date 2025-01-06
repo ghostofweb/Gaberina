@@ -1,12 +1,14 @@
-import React, { useState } from 'react';
-import { assets } from '../assets/assets';
+import React, { useState } from "react";
+import axios from "axios";
+import { assets } from "../assets/assets"; // Assuming you have asset imports
+import { backendUrl } from "../App"; // Assuming you have the backend URL imported
 
 const Add = ({ token }) => {
   const [sizes, setSizes] = useState([
-    { size: '50ml', price: '' },
-    { size: '100ml', price: '' },
+    { size: "50ml", price: "" },
+    { size: "100ml", price: "" },
   ]);
-  const [fragranceNotes, setFragranceNotes] = useState(['', '']);
+  const [fragranceNotes, setFragranceNotes] = useState(["", ""]);
   const [imagePreviews, setImagePreviews] = useState([null, null, null, null]);
 
   const handleSizeChange = (index, field, value) => {
@@ -31,7 +33,7 @@ const Add = ({ token }) => {
 
   const handleAddFragrance = () => {
     if (fragranceNotes.length < 5) {
-      setFragranceNotes([...fragranceNotes, '']);
+      setFragranceNotes([...fragranceNotes, ""]);
     }
   };
 
@@ -46,61 +48,168 @@ const Add = ({ token }) => {
     setImagePreviews(updatedPreviews);
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+
     const formData = new FormData(e.target);
 
-    const productData = {
-      name: formData.get('name'),
-      description: formData.get('description'),
-      category: formData.get('category'),
-      subCategory: formData.get('subCategory'),
-      bestseller: formData.get('bestseller') === 'true',
-      sizes: sizes.map(({ size, price }) => ({ size, price: parseFloat(price) })),
-      fragranceNotes: fragranceNotes.filter((note) => note.trim() !== ''),
-      images: Array.from(formData.getAll('images')),
-    };
+    // Convert sizes array to a prices object with sizes as keys
+    const price = sizes.reduce((acc, { size, price }) => {
+      acc[size] = price;
+      return acc;
+    }, {});
 
-    console.log('Product Data:', productData);
+    // Append the prices as a stringified object
+    formData.append("sizes", JSON.stringify(sizes.map(({ size }) => size)));
+    formData.append("price", JSON.stringify(price));
+    formData.append("fragranceNotes", JSON.stringify(fragranceNotes));
+
+    // Debugging: Log FormData content
+    console.log("FormData entries:");
+    for (const [key, value] of formData.entries()) {
+      console.log(`${key}:`, value);
+    }
+
+    try {
+      const response = await axios.post(`${backendUrl}/api/product/add`, formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      console.log("Product added successfully:", response.data);
+      alert("Product added successfully!");
+      window.location.reload();
+    } catch (error) {
+      console.error("Error adding product:", error.response?.data || error.message);
+      alert("Failed to add product. Please try again.");
+    }
   };
 
   return (
-    <form onSubmit={handleSubmit} className="max-w-4xl mx-auto p-6 bg-dark rounded-lg shadow-lg">
+    <form
+      onSubmit={handleSubmit}
+      className="max-w-4xl mx-auto p-6 bg-dark rounded-lg shadow-lg"
+    >
       {/* Upload Images */}
       <div className="mb-6">
-        <p className="text-champagne font-bold mb-2">Upload Images</p>
-        <div className="flex flex-wrap gap-4">
-          {[...Array(4)].map((_, index) => (
-            <div key={index} className="relative">
-              <label htmlFor={`image${index}`} className="cursor-pointer">
-                <img
-                  src={imagePreviews[index] || assets.upload_area}
-                  alt={`Upload Preview ${index + 1}`}
-                  className="w-20 h-20 object-cover border rounded-md"
-                />
-              </label>
-              {imagePreviews[index] && (
-               <button
-               type="button"
-               onClick={() => handleRemoveImage(index)}
-               className="absolute top-0 right-0 bg-dark text-buttontxt rounded-full w-6 h-6 flex items-center justify-center text-sm"
-             >
-               X
-             </button>
-             
-              )}
-              <input
-                type="file"
-                id={`image${index}`}
-                name="images"
-                hidden
-                accept="image/*"
-                onChange={(e) => handleImageChange(index, e.target.files[0])}
-              />
-            </div>
-          ))}
-        </div>
-      </div>
+  <p className="text-champagne font-bold mb-2">Upload Images</p>
+  <div className="flex flex-wrap gap-4">
+    {/* Image 1 */}
+    <div className="relative">
+      <label htmlFor="image1" className="cursor-pointer">
+        <img
+          src={imagePreviews[0] || assets.upload_area}
+          alt="Upload Preview 1"
+          className="w-20 h-20 object-cover border rounded-md"
+        />
+      </label>
+      {imagePreviews[0] && (
+        <button
+          type="button"
+          onClick={() => handleRemoveImage(0)}
+          className="absolute top-0 right-0 bg-dark text-buttontxt rounded-full w-6 h-6 flex items-center justify-center text-sm"
+        >
+          X
+        </button>
+      )}
+      <input
+        type="file"
+        id="image1"
+        name="image1"
+        hidden
+        accept="image/*"
+        onChange={(e) => handleImageChange(0, e.target.files[0])}
+      />
+    </div>
+
+    {/* Image 2 */}
+    <div className="relative">
+      <label htmlFor="image2" className="cursor-pointer">
+        <img
+          src={imagePreviews[1] || assets.upload_area}
+          alt="Upload Preview 2"
+          className="w-20 h-20 object-cover border rounded-md"
+        />
+      </label>
+      {imagePreviews[1] && (
+        <button
+          type="button"
+          onClick={() => handleRemoveImage(1)}
+          className="absolute top-0 right-0 bg-dark text-buttontxt rounded-full w-6 h-6 flex items-center justify-center text-sm"
+        >
+          X
+        </button>
+      )}
+      <input
+        type="file"
+        id="image2"
+        name="image2"
+        hidden
+        accept="image/*"
+        onChange={(e) => handleImageChange(1, e.target.files[0])}
+      />
+    </div>
+
+    {/* Image 3 */}
+    <div className="relative">
+      <label htmlFor="image3" className="cursor-pointer">
+        <img
+          src={imagePreviews[2] || assets.upload_area}
+          alt="Upload Preview 3"
+          className="w-20 h-20 object-cover border rounded-md"
+        />
+      </label>
+      {imagePreviews[2] && (
+        <button
+          type="button"
+          onClick={() => handleRemoveImage(2)}
+          className="absolute top-0 right-0 bg-dark text-buttontxt rounded-full w-6 h-6 flex items-center justify-center text-sm"
+        >
+          X
+        </button>
+      )}
+      <input
+        type="file"
+        id="image3"
+        name="image3"
+        hidden
+        accept="image/*"
+        onChange={(e) => handleImageChange(2, e.target.files[0])}
+      />
+    </div>
+
+    {/* Image 4 */}
+    <div className="relative">
+      <label htmlFor="image4" className="cursor-pointer">
+        <img
+          src={imagePreviews[3] || assets.upload_area}
+          alt="Upload Preview 4"
+          className="w-20 h-20 object-cover border rounded-md"
+        />
+      </label>
+      {imagePreviews[3] && (
+        <button
+          type="button"
+          onClick={() => handleRemoveImage(3)}
+          className="absolute top-0 right-0 bg-dark text-buttontxt rounded-full w-6 h-6 flex items-center justify-center text-sm"
+        >
+          X
+        </button>
+      )}
+      <input
+        type="file"
+        id="image4"
+        name="image4"
+        hidden
+        accept="image/*"
+        onChange={(e) => handleImageChange(3, e.target.files[0])}
+      />
+    </div>
+  </div>
+</div>
+
 
       {/* Product Name and Description */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
@@ -111,7 +220,7 @@ const Add = ({ token }) => {
             name="name"
             placeholder="Type Here"
             required
-            className="w-full bg-lighterDark px-4 py-2 rounded-lg text-buttontxt border hover:border-champagne transition-colors ease-in-out duration-200"
+            className="w-full bg-lighterDark px-4 py-2 rounded-lg text-buttontxt border hover:border-champagne"
           />
         </div>
         <div>
@@ -120,7 +229,7 @@ const Add = ({ token }) => {
             name="description"
             placeholder="Write content"
             required
-            className="w-full bg-lighterDark px-4 py-2 rounded-lg text-buttontxt border hover:border-champagne transition-colors ease-in-out duration-200"
+            className="w-full bg-lighterDark px-4 py-2 rounded-lg text-buttontxt border hover:border-champagne"
           />
         </div>
       </div>
@@ -132,7 +241,7 @@ const Add = ({ token }) => {
           <select
             name="category"
             required
-            className="w-full bg-lighterDark text-buttontxt px-4 py-2 rounded-lg border hover:border-champagne transition-colors ease-in-out duration-200"
+            className="w-full bg-lighterDark text-buttontxt px-4 py-2 rounded-lg border hover:border-champagne"
           >
             <option value="Oil">Oil</option>
             <option value="Perfume">Perfume</option>
@@ -143,7 +252,7 @@ const Add = ({ token }) => {
           <select
             name="subCategory"
             required
-            className="w-full bg-lighterDark text-buttontxt px-4 py-2 rounded-lg border hover:border-champagne transition-colors ease-in-out duration-200"
+            className="w-full bg-lighterDark text-buttontxt px-4 py-2 rounded-lg border hover:border-champagne"
           >
             <option value="Floral">Floral</option>
             <option value="Oud">Oud</option>
@@ -174,9 +283,11 @@ const Add = ({ token }) => {
                 type="number"
                 placeholder="Price"
                 value={size.price}
-                onChange={(e) => handleSizeChange(index, 'price', e.target.value)}
+                onChange={(e) =>
+                  handleSizeChange(index, "price", e.target.value)
+                }
                 required
-                className="flex-1 bg-lighterDark px-4 py-2 rounded-lg text-buttontxt border hover:border-champagne transition-colors ease-in-out duration-200"
+                className="flex-1 bg-lighterDark px-4 py-2 rounded-lg text-buttontxt border hover:border-champagne"
               />
             </div>
           ))}
@@ -195,13 +306,13 @@ const Add = ({ token }) => {
                 placeholder={`Note ${index + 1}`}
                 onChange={(e) => handleFragranceChange(index, e.target.value)}
                 required
-                className="w-full bg-lighterDark px-4 py-2 rounded-lg text-buttontxt border hover:border-champagne transition-colors ease-in-out duration-200"
+                className="w-full bg-lighterDark px-4 py-2 rounded-lg text-buttontxt border hover:border-champagne"
               />
               {index > 1 && (
                 <button
                   type="button"
                   onClick={() => handleRemoveFragrance(index)}
-                 className="absolute top-0 right-0 bg-dark text-buttontxt rounded-full w-6 h-6 flex items-center justify-center text-sm"
+                  className="absolute top-0 right-0 bg-dark text-buttontxt rounded-full w-6 h-6 flex items-center justify-center text-sm"
                 >
                   X
                 </button>
@@ -226,17 +337,17 @@ const Add = ({ token }) => {
         <select
           name="bestseller"
           required
-          className="w-full sm:w-auto bg-lighterDark text-buttontxt px-4 py-2 rounded-lg border hover:border-champagne transition-colors ease-in-out duration-200"
+          className="w-full sm:w-auto bg-lighterDark text-buttontxt px-4 py-2 rounded-lg border hover:border-champagne"
         >
           <option value="true">Yes</option>
           <option value="false">No</option>
         </select>
       </div>
 
-      {/* Submit Button */}
+      {/* Submit */}
       <button
         type="submit"
-        className="w-full sm:w-auto bg-champagne text-dark px-6 py-3 rounded-lg hover:bg-brown transition-colors"
+        className="bg-gold text-buttontxt px-6 py-2 rounded-lg shadow-md hover:bg-champagne"
       >
         Add Product
       </button>
