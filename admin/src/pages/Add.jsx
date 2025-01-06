@@ -1,6 +1,7 @@
 import React from 'react'
 
-const Add = () => {
+const Add = ({token}) => {
+  console.log(token);
   return (
     <div>
       
