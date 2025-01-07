@@ -12,6 +12,7 @@ const PlaceOrder = () => {
   const navigate = useNavigate(); // For programmatic navigation
   const [selectedPayment, setSelectedPayment] = useState(""); // State to track the selected payment method
 
+
   const handlePlaceOrder = () => {
     if (Object.keys(cartItems).length === 0) {
       toast.error('Please add something to the cart', {
