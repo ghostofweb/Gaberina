@@ -7,13 +7,27 @@ import LocalMallIcon from '@mui/icons-material/LocalMall';
 import MenuIcon from '@mui/icons-material/Menu';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { ShopContext } from '../context/ShopContext';
+import { toast } from 'react-toastify';
 
 const NavBar = () => {
   const [visible, setVisible] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
-  const { setShowSearch , cartCount} = useContext(ShopContext);
+  const { setShowSearch , cartCount,token,setToken,setCartItems} = useContext(ShopContext);
 
+  const logout = ()=>{
+    setToken(null)
+    localStorage.removeItem("token")
+    setCartItems({})
+    toast.success('Logged out successfully!', {
+      position: 'top-right',
+      style: {
+        backgroundColor: '#1E1E1E',
+        color: '#FDFBF6',
+      },
+    });
+    navigate("/login")
+  }
   // Highlight current nav link
   const getHrStyle = (path) => ({
     display: location.pathname === path ? 'block' : 'none',
@@ -116,27 +130,41 @@ const NavBar = () => {
       '&:hover': { color: '#C5A253' },
     }}
   />
-  <div
-    className="group-hover:block hidden absolute dropdown-menu right-0 pt-4"
-    style={{ zIndex: 50 }} // Ensures it floats above other elements
-  >
-    <div className="flex flex-col gap-3 px-5 w-36 py-5 bg-lighterDark text-gold rounded-lg shadow-lg">
-      <p className="cursor-pointer hover:text-champagne text-lg border-b border-white pb-3 transition duration-300 ease-in-out">
-        My Profile
-      </p>
-      <p className="cursor-pointer hover:text-champagne text-lg border-b border-white pb-3 transition duration-300 ease-in-out">
-        Orders
-      </p>
-      <p className="cursor-pointer hover:text-champagne text-lg border-b border-white pb-3 transition duration-300 ease-in-out">
-        Wishlist
-      </p>
-      <Link to={"/login"}>
-      <p className="cursor-pointer hover:text-champagne text-lg border-b border-white pb-3 transition duration-300 ease-in-out">
-        Logout
-      </p>
-      </Link>
+ <div
+      className="group-hover:block hidden absolute dropdown-menu right-0 pt-4"
+      style={{ zIndex: 50 }} // Ensures it floats above other elements
+    >
+      <div className="flex flex-col gap-3 px-5 w-36 py-5 bg-lighterDark text-gold rounded-lg shadow-lg">
+        {token || localStorage.getItem('token') ? (
+          <>
+            <p
+              onClick={() => navigate('/orders')}
+              className="cursor-pointer hover:text-champagne text-lg border-b border-white pb-3 transition duration-300 ease-in-out"
+            >
+              Orders
+            </p>
+            <p
+              onClick={() => navigate('/profile')}
+              className="cursor-pointer hover:text-champagne text-lg border-b border-white pb-3 transition duration-300 ease-in-out"
+            >
+              My Profile
+            </p>
+            <p
+              onClick={logout}
+              className="cursor-pointer hover:text-champagne text-lg border-b border-white pb-3 transition duration-300 ease-in-out"
+            >
+              Logout
+            </p>
+          </>
+        ) : (
+          <Link to="/login">
+            <p className="cursor-pointer hover:text-champagne text-lg border-b border-white pb-3 transition duration-300 ease-in-out">
+              Login
+            </p>
+          </Link>
+        )}
+      </div>
     </div>
-  </div>
 </div>
 
 

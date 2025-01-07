@@ -4,37 +4,34 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Title from '../components/Title';
-import { Navigate, NavLink, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 const Cart = () => {
-  const { products, currency, total } = useContext(ShopContext);
-  const [cartData, setCartData] = useState({});
+  const { products, currency, cartItems, setCartItems } = useContext(ShopContext);
   const navigate = useNavigate(); // For programmatic navigation
 
+  // Use the cartItems directly from context
   useEffect(() => {
-    const savedCart = JSON.parse(localStorage.getItem('getItems')) || {};
-    setCartData(savedCart);
-  }, []);
+    setCartItems(cartItems); // Initialize with context's cartItems
+  }, [cartItems, setCartItems]);
 
   const saveCartData = (updatedCart) => {
-    setCartData(updatedCart);
-    localStorage.setItem('getItems', JSON.stringify(updatedCart));
+    setCartItems(updatedCart);  // Update cart in context
   };
 
   const removeFromCart = (itemId, size) => {
-    let updatedCart = { ...cartData };
+    let updatedCart = { ...cartItems };
     if (updatedCart[itemId] && updatedCart[itemId][size]) {
       delete updatedCart[itemId][size];
       if (Object.keys(updatedCart[itemId]).length === 0) {
         delete updatedCart[itemId];
       }
     }
-    saveCartData(updatedCart);
-    window.location.reload(); 
+    saveCartData(updatedCart);  // Use this to update the cart without reload
   };
 
   const updateQuantity = (itemId, size, increment) => {
-    let updatedCart = { ...cartData };
+    let updatedCart = { ...cartItems };
     if (updatedCart[itemId] && updatedCart[itemId][size]) {
       updatedCart[itemId][size] += increment;
 
@@ -45,17 +42,16 @@ const Cart = () => {
         }
       }
     }
-    saveCartData(updatedCart);
-    window.location.reload(); 
+    saveCartData(updatedCart);  // Save the updated cart data
   };
 
   const calculateSubtotal = () => {
     let subtotal = 0;
-    for (const itemId in cartData) {
-      for (const size in cartData[itemId]) {
-        const product = products.find((prod) => prod.id === itemId);
+    for (const itemId in cartItems) {
+      for (const size in cartItems[itemId]) {
+        const product = products.find((prod) => prod._id === itemId);
         if (product && product.price[size]) {
-          subtotal += product.price[size] * cartData[itemId][size];
+          subtotal += product.price[size] * cartItems[itemId][size];
         }
       }
     }
@@ -63,8 +59,7 @@ const Cart = () => {
   };
 
   const calculateShipping = () => {
-    // Fixed shipping cost of ₹150
-    return 150;
+    return 150; // Fixed shipping cost of ₹150
   };
 
   const calculateTotal = () => {
@@ -72,37 +67,39 @@ const Cart = () => {
   };
 
   const handleCheckout = () => {
-    // If the cart is empty, show toast and prevent navigation
-    if (Object.keys(cartData).length === 0) {
-        toast.error('Please select the size', {
-            position: 'top-right',
-            className: 'custom-toast',
-            style: {
-              backgroundColor: '#1E1E1E', // Dark Charcoal background
-              color: '#CFC4B9', // Gold text color
-              borderLeft: '5px solid #BFA253', // Champagne accent color
-            },
-          });          
+    if (Object.keys(cartItems).length === 0) {
+      toast.error('Your cart is empty. Please select products before checking out.', {
+        position: 'top-right',
+        className: 'custom-toast',
+        style: {
+          backgroundColor: '#1E1E1E', // Dark Charcoal background
+          color: '#CFC4B9', // Gold text color
+          borderLeft: '5px solid #BFA253', // Champagne accent color
+        },
+      });
       return; // Don't navigate if cart is empty
     }
 
-    // Navigate to checkout if cart is not empty
     navigate('/place-order');
   };
+
+  if (!products || products.length === 0) {
+    return <p>Loading products...</p>; // Show loading state if products are not yet loaded
+  }
 
   return (
     <div className="bg-[#1E1E1E] text-[#FFF8E7] p-6 rounded-lg shadow-lg">
       <h2 className="text-2xl font-bold mb-6">Your Cart</h2>
-      {Object.keys(cartData).length === 0 ? (
+      {Object.keys(cartItems).length === 0 ? (
         <p className="text-center text-lg text-[#D9D9D9]">Your cart is empty.</p>
       ) : (
         <div className="space-y-8">
-          {Object.keys(cartData).map((itemId) => {
-            const product = products.find((prod) => prod.id === itemId);
+          {Object.keys(cartItems).map((itemId) => {
+            const product = products.find((prod) => prod._id === itemId);
             if (!product) return null;
-            return Object.keys(cartData[itemId]).map((size) => {
-              const quantity = cartData[itemId][size];
-              const price = product.price[size];
+            return Object.keys(cartItems[itemId]).map((size) => {
+              const quantity = cartItems[itemId][size];
+              const price = product?.price?.[size] || 0; // Fallback if price is undefined
               return (
                 <div
                   key={`${itemId}-${size}`}
@@ -173,9 +170,9 @@ const Cart = () => {
             <span>₹{calculateShipping()}</span>
           </div>
           <div className="flex justify-between text-xl font-semibold">
-  <span>Total:</span>
-  <span>{currency}{Object.keys(cartData).length === 0 ? '0' : `${total}`}</span>
-</div>
+            <span>Total:</span>
+            <span>{currency}{calculateTotal()}</span>
+          </div>
         </div>
         <button
           onClick={handleCheckout}

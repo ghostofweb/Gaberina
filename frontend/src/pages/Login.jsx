@@ -1,51 +1,107 @@
-import React, { useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import Title from '../components/Title';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
+import { ShopContext } from '../context/ShopContext';
+import axios from 'axios';
+import { toast } from 'react-toastify';
+import { useNavigate } from 'react-router-dom';
 
 const Login = () => {
-  const [currentState, setCurrentState] = useState("Sign Up");
+  const [currentState, setCurrentState] = useState("login");
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const { setToken, backendUrl } = useContext(ShopContext);
   const [formData, setFormData] = useState({
     fullName: '',
     email: '',
     password: '',
     confirmPassword: '',
   });
-  const [error, setError] = useState('');
+
+  const navigate = useNavigate();
 
   const handleInputChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
-    setError('');
   };
 
-  const handleSubmit = (e) => {
+  const storeToken = (token) => {
+    localStorage.setItem("token", token);
+    setToken(token); // Update the global context
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
+    // Validation
     if (currentState === "Sign Up" && formData.password !== formData.confirmPassword) {
-      setError("Passwords do not match.");
+      toast.error("Passwords do not match.", {
+        position: "top-right",
+        style: { backgroundColor: "#1E1E1E", color: "#FDFBF6" },
+      });
       return;
     }
 
     if (currentState === "Sign Up" && !formData.fullName.trim()) {
-      setError("Full name is required.");
+      toast.error("Full name is required.", {
+        position: "top-right",
+        style: { backgroundColor: "#1E1E1E", color: "#FDFBF6" },
+      });
       return;
     }
 
     if (!formData.email.trim() || !formData.password.trim()) {
-      setError("All fields are required.");
+      toast.error("All fields are required.", {
+        position: "top-right",
+        style: { backgroundColor: "#1E1E1E", color: "#FDFBF6" },
+      });
       return;
     }
 
-    setError('');
-    // Add your form submission logic here
-    alert(`${currentState} successful!`);
+    const { fullName, email, password } = formData;
+
+    try {
+      let response;
+      if (currentState === "Sign Up") {
+        // Register user
+        response = await axios.post(`${backendUrl}/api/user/register`, {
+          name: fullName,
+          email,
+          password,
+        });
+      } else {
+        // Login user
+        response = await axios.post(`${backendUrl}/api/user/login`, {
+          email,
+          password,
+        });
+      }
+
+      const { success, token, message } = response.data;
+
+      if (success && token) {
+        storeToken(token); // Save token to localStorage and context
+        toast.success(message || `${currentState} successful!`, {
+          position: "top-right",
+          style: { backgroundColor: "#1E1E1E", color: "#FDFBF6" },
+        });
+        navigate('/'); // Redirect to homepage
+      }
+    } catch (error) {
+      const errorMessage = error.response?.data?.message || "Something went wrong.";
+      toast.error(errorMessage, {
+        position: "top-right",
+        style: { backgroundColor: "#1E1E1E", color: "#FDFBF6" },
+      });
+    }
   };
 
-  const handleForgotPassword = () => {
-    // Logic for handling "Forgot Password"
-    alert('Forgot Password clicked! Add your recovery flow here.');
-  };
+  useEffect(() => {
+    const storedToken = localStorage.getItem("token");
+    if (storedToken) {
+      setToken(storedToken); // Update context with the stored token
+      navigate('/'); // Redirect to homepage
+    }
+  }, [setToken, navigate]);
 
   return (
     <div className="flex flex-col items-center w-[90%] sm:max-w-md m-auto mt-14 text-buttontxt">
@@ -116,7 +172,6 @@ const Login = () => {
             </div>
           </div>
         )}
-        {error && <p className="text-sm text-red-500">{error}</p>}
         <button
           type="submit"
           className="w-full py-2 mt-4 text-center rounded-md bg-gold text-dark font-medium hover:bg-champagne transition duration-300"
@@ -125,15 +180,6 @@ const Login = () => {
         </button>
       </form>
 
-      {currentState === "Login" && (
-        <p
-          className="mt-4 text-sm text-gold cursor-pointer hover:text-champagne transition duration-300"
-          onClick={handleForgotPassword}
-        >
-          Forgot Password?
-        </p>
-      )}
-
       <p className="mt-6 text-sm text-lightGray">
         {currentState === "Sign Up"
           ? "Already have an account?"
@@ -141,7 +187,6 @@ const Login = () => {
         <span
           onClick={() => {
             setCurrentState(currentState === "Sign Up" ? "Login" : "Sign Up");
-            setError('');
             setFormData({ fullName: '', email: '', password: '', confirmPassword: '' });
           }}
           className="ml-1 text-gold cursor-pointer hover:text-champagne transition duration-300"

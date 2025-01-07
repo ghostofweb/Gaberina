@@ -2,12 +2,11 @@ import React, { useContext, useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { ShopContext } from '../context/ShopContext';
 import { assets } from '../assets/assets';
-import RelatedProducts from '../components/RelatedProducts';
 import Title from '../components/Title';
 
 const Product = () => {
   const { productId } = useParams();
-  const { products, currency, addToCart } = useContext(ShopContext);
+  const { products, currency, cartItems, addToCart } = useContext(ShopContext);
   const [productData, setProductData] = useState(null);
   const [image, setImage] = useState('');
   const [selectedSize, setSelectedSize] = useState(null);
@@ -15,7 +14,7 @@ const Product = () => {
 
   const fetchProduct = async () => {
     products.map((item) => {
-      if (item.id === productId) {
+      if (item._id === productId) {
         setProductData(item);
         setImage(item.image[0]);
         return null;
@@ -26,6 +25,10 @@ const Product = () => {
 
   useEffect(() => {
     fetchProduct();
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth', // Adds smooth scroll effect
+    });
   }, [productId, products]);
 
   const handleSizeChange = (size) => {
@@ -42,6 +45,12 @@ const Product = () => {
   const price = selectedSize 
     ? productData.price[selectedSize] 
     : productData.price[defaultSize];
+
+  const handleAddToCart = () => {
+    if (selectedSize) {
+      addToCart(productData._id, selectedSize);
+    }
+  };
 
   return (
     <div className="border-t-2 pt-10 transition-opacity ease-in duration-500 opacity-100">
@@ -88,19 +97,18 @@ const Product = () => {
 
           {/* Fragrance Notes */}
           <div className="mt-5">
-  <p className="text-gold font-bold text-lg">Fragrance Notes:</p>
-  <ul className="flex flex-wrap gap-4 mt-3">
-    {productData.fragranceNotes.map((note, index) => (
-      <li
-        key={index}
-        className="bg-lighterDark text-gold px-4 py-2 rounded-lg shadow-md border hover:border-champagne hover:text-champagne transition-colors ease-in-out duration-300"
-      >
-        {note}
-      </li>
-    ))}
-  </ul>
-</div>
-
+            <p className="text-gold font-bold text-lg">Fragrance Notes:</p>
+            <ul className="flex flex-wrap gap-4 mt-3">
+              {productData.fragranceNotes.map((note, index) => (
+                <li
+                  key={index}
+                  className="bg-lighterDark text-gold px-4 py-2 rounded-lg shadow-md border hover:border-champagne hover:text-champagne transition-colors ease-in-out duration-300"
+                >
+                  {note}
+                </li>
+              ))}
+            </ul>
+          </div>
 
           <div className="flex flex-col gap-4 my-8">
             <p className="text-buttontxt font-bold">Select Size</p>
@@ -118,8 +126,8 @@ const Product = () => {
               ))}
             </div>
           </div>
-          <button 
-            onClick={() => addToCart(productData.id, selectedSize)} 
+          <button
+            onClick={handleAddToCart}
             className={`bg-buttonhvr text-buttontxt active:bg-champagne px-8 py-3 font-bold ${
               !selectedSize ? 'opacity-50' : ''
             }`}
@@ -150,10 +158,24 @@ const Product = () => {
         </div>
       </div>
 
-      <div className="text-center py-8 text-3xl">
-        <Title text1="RELATED" text2="PRODUCTS" />
+      {/* Cart Items Section (To display cart items that are already added) */}
+      <div className="mt-12">
+        <h3 className="text-xl font-bold text-gold">Items in Cart</h3>
+        <div>
+          {Object.keys(cartItems).map((itemId) => {
+            const product = products.find((prod) => prod._id === itemId);
+            if (product) {
+              return Object.keys(cartItems[itemId]).map((size) => (
+                <div key={`${itemId}-${size}`} className="flex justify-between mt-4">
+                  <p>{product.name} ({size})</p>
+                  <p>{currency}{product.price[size]} x {cartItems[itemId][size]}</p>
+                </div>
+              ));
+            }
+            return null;
+          })}
+        </div>
       </div>
-      <RelatedProducts category={productData.category} subCategory={productData.subCategory} />
     </div>
   );
 };

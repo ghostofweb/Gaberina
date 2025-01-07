@@ -27,8 +27,8 @@ const RelatedProducts = ({ category }) => {
     <div className="grid grid-cols-1 sm:grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-3 gap-y-6">
        {related.map((item) => (
           <ProductItem
-            key={item.id}
-            id={item.id}
+            key={item._id}
+            id={item._id}
             name={item.name}
             subCategory={item.subCategory}
             price={item.price} // Pass the 50ml price

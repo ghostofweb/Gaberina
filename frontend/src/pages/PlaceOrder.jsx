@@ -8,26 +8,25 @@ import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 
 const PlaceOrder = () => {
-  const { products, currency } = useContext(ShopContext);
+  const { cartItems, currency, products } = useContext(ShopContext);
   const navigate = useNavigate(); // For programmatic navigation
   const [selectedPayment, setSelectedPayment] = useState(""); // State to track the selected payment method
 
-  const savedCart = JSON.parse(localStorage.getItem("getItems")) || {};
   const handlePlaceOrder = () => {
-    if (!savedCart){
-    toast.error('Please add Something In Cart', {
-    position: 'top-right',
-    className: 'custom-toast',
-    style: {
-        backgroundColor: '#1E1E1E', // Dark Charcoal background
-        color: '#FDFBF6', // Button text color
-        borderLeft: '5px solid #BFA253', // Champagne accent color
-          },
-    });
-    return
+    if (Object.keys(cartItems).length === 0) {
+      toast.error('Please add something to the cart', {
+        position: 'top-right',
+        className: 'custom-toast',
+        style: {
+          backgroundColor: '#1E1E1E', // Dark Charcoal background
+          color: '#FDFBF6', // Button text color
+          borderLeft: '5px solid #BFA253', // Champagne accent color
+        },
+      });
+      return;
     }
 
-    if(!selectedPayment){
+    if (!selectedPayment) {
       toast.error('Please select a payment method', {
         position: 'top-right',
         className: 'custom-toast',
@@ -35,20 +34,25 @@ const PlaceOrder = () => {
           backgroundColor: '#1E1E1E', // Dark Charcoal background
           color: '#FDFBF6', // Button text color
           borderLeft: '5px solid #BFA253', // Champagne accent color
-          },
-          });
-          return
+        },
+      });
+      return;
     }
-   navigate("/orders")
+
+    // Proceed to order confirmation page
+    navigate("/orders");
   };
-  
+
   const calculateSubtotal = () => {
     let subtotal = 0;
-    for (const itemId in savedCart) {
-      for (const size in savedCart[itemId]) {
-        const product = products.find((prod) => prod.id === itemId);
+    // Calculate the subtotal based on cart items and selected size/quantity
+    for (const itemId in cartItems) {
+      for (const size in cartItems[itemId]) {
+        const quantity = cartItems[itemId][size];
+        // Find the corresponding product and size
+        const product = products.find((prod) => prod._id === itemId);
         if (product && product.price[size]) {
-          subtotal += product.price[size] * savedCart[itemId][size];
+          subtotal += product.price[size] * quantity;
         }
       }
     }
@@ -129,20 +133,20 @@ const PlaceOrder = () => {
           <Title text1="CART" text2="SUMMARY" />
         </div>
         <div className="space-y-6">
-          {Object.keys(savedCart).length === 0 ? (
+          {Object.keys(cartItems).length === 0 ? (
             <p className="text-center text-lg text-[#D9D9D9]">Your cart is empty.</p>
           ) : (
-            Object.keys(savedCart).map((itemId) => {
-              const product = products.find((prod) => prod.id === itemId);
-              if (!product) return null;
-              return Object.keys(savedCart[itemId]).map((size) => {
-                const quantity = savedCart[itemId][size];
-                const price = product.price[size];
+            Object.keys(cartItems).map((itemId) => {
+              const cartItem = cartItems[itemId];
+              return Object.keys(cartItem).map((size) => {
+                const quantity = cartItem[size];
+                const product = products.find((prod) => prod._id === itemId);
+                const price = product && product.price[size];
                 return (
                   <div key={`${itemId}-${size}`} className="flex justify-between">
                     <div>
                       <p className="text-sm text-[#FFF8E7]">
-                        {product.name} (Size: {size})
+                        {product?.name} (Size: {size})
                       </p>
                       <p className="text-sm text-[#D9D9D9]">
                         Price: {currency}{price} x {quantity}
@@ -174,47 +178,32 @@ const PlaceOrder = () => {
 
         {/* Payment Options */}
         <div className="mt-8">
-  <Title text1="PAYMENT" text2="OPTIONS" />
-  <div className="flex gap-4 justify-between mt-4">
-    {[
-      { id: "google-pay", name: "Google Pay", logo: GooglePayLogo },
-      { id: "paytm", name: "Paytm", logo: PaytmLogo },
-      { id: "cod", name: "Cash on Delivery", logo: CODLogo },
-    ].map(({ id, name, logo }) => (
-      <button
-        key={id}
-        onClick={() => handlePaymentSelection(id)}
-        className={`payment-button flex items-center gap-2 ${
-          selectedPayment === id ? "border-buttontxt" : "border-champagne"
-        }`}
-      >
-        <span
-          className={`w-3 h-3 rounded-full ${
-            selectedPayment === id
-              ? "bg-green-500"
-              : "bg-transparent border border-champagne"
-          }`}
-        ></span>
-        <img src={logo} alt={name} className="w-20" />
-      </button>
-    ))}
-  </div>
+          <Title text1="PAYMENT" text2="OPTIONS" />
+          <div className="flex gap-4 justify-between mt-4">
+            {[{ id: "google-pay", name: "Google Pay", logo: GooglePayLogo },
+              { id: "paytm", name: "Paytm", logo: PaytmLogo },
+              { id: "cod", name: "Cash on Delivery", logo: CODLogo }].map(({ id, name, logo }) => (
+              <button
+                key={id}
+                onClick={() => handlePaymentSelection(id)}
+                className={`payment-button flex items-center gap-2 ${selectedPayment === id ? "border-buttontxt" : "border-champagne"}`}
+              >
+                <span className={`w-3 h-3 rounded-full ${selectedPayment === id ? "bg-green-500" : "bg-transparent border border-champagne"}`}></span>
+                <img src={logo} alt={name} className="w-20" />
+              </button>
+            ))}
+          </div>
 
-  {/* Place Order Button */}
-  <div className="mt-6 flex justify-center">
-    <button
-      onClick={handlePlaceOrder}
-      className={`py-2 px-6 rounded-md font-medium transition-colors ease-in-out duration-200 ${
-        selectedPayment
-          ? "bg-champagne hover:bg-buttonhvr text-buttontxt"
-          : "bg-gray-500 text-gray-300"
-      }`}
-    >
-      Place Order
-    </button>
-  </div>
-</div>
-
+          {/* Place Order Button */}
+          <div className="mt-6 flex justify-center">
+            <button
+              onClick={handlePlaceOrder}
+              className={`py-2 px-6 rounded-md font-medium transition-colors ease-in-out duration-200 ${selectedPayment ? "bg-champagne hover:bg-buttonhvr text-buttontxt" : "bg-gray-500 text-gray-300"}`}
+            >
+              Place Order
+            </button>
+          </div>
+        </div>
       </div>
     </div>
   );

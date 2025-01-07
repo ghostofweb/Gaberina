@@ -8,8 +8,9 @@ const LatestCollection = () => {
     const [bestSellers,setBestSellers] = useState([])
 
     useEffect(() => {
-      setBestSellers(products.slice(0,6))
-    }, [])
+      const bestProduct = products.filter((item)=>(item.bestseller))
+      setBestSellers(bestProduct.slice(0,6))
+    }, [products])
     console.log(bestSellers);
     
   return (
@@ -27,7 +28,7 @@ const LatestCollection = () => {
       bestSellers.map((item,index)=>(
         <ProductItem
         key={index}
-        id={item.id}
+        id={item._id}
         name={item.name}
         subCategory={item.subCategory}
         price={item.price} // Pass the 50ml price

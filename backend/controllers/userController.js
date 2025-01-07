@@ -16,14 +16,14 @@ const loginUser = async (req, res) => {
         if (!email || !password) {
             return res.status(400).json({
                 success: false,
-                error: "Email and password are required."
+                message: "Email and password are required."
             });
         }
 
         if (!validator.isEmail(email)) {
             return res.status(400).json({
                 success: false,
-                error: "Invalid Email Format",
+                message: "Invalid Email Format",
             });
         }
 
@@ -32,7 +32,7 @@ const loginUser = async (req, res) => {
         if (!user) {
             return res.status(400).json({
                 success: false,
-                error: "Invalid Credentials"
+                message: "Invalid Credentials"
             });
         }
 
@@ -41,9 +41,10 @@ const loginUser = async (req, res) => {
         if (!isMatch) {
             return res.status(400).json({
                 success: false,
-                error: "Invalid Credentials",
+                message: "Invalid Credentials",
             });
         }
+        
 
         const token = createToken(user._id);
 
