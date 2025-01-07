@@ -9,7 +9,7 @@ try {
         userId,
         items,
         address,
-        amount,
+        totalAmount:amount,
         paymentMethod:"COD",
         payment:false,
         date:Date.now()
