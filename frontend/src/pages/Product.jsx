@@ -51,7 +51,7 @@ const Product = () => {
     if (selectedSize) {
       addToCart(productData._id, selectedSize);
     }
-    document.location.reload();
+    
   };
 
   return (
