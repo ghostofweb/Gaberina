@@ -9,6 +9,7 @@ const NavBar = ({ onLogout, isAdmin }) => {
   const handleLogout = async () => {
         // Remove the token from localStorage
         localStorage.removeItem('token');
+        document.location.reload();
   }
 
 
