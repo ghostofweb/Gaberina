@@ -21,7 +21,8 @@ app.use(cors({
     origin: [
         'http://localhost:5173',  // User frontend
         'http://localhost:5174',
-        'https://gaberina.vercel.app'
+        'https://gaberina.vercel.app',
+        'https://gaberina-yrai.vercel.app'
 
     ],
     credentials: true, // Allow credentials (cookies) to be sent
