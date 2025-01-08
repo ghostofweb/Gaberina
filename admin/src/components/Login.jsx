@@ -2,6 +2,7 @@ import axios from 'axios';
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom'; // Import useNavigate
 import { ToastContainer, toast } from 'react-toastify'; // Import toast
+import { backendUrl } from '../App';
 
 const Login = () => {
     const [email, setEmail] = useState('guest@gaberina.com');
@@ -18,7 +19,7 @@ const Login = () => {
         }
 
         try {
-            const response = await axios.post('http://localhost:4000/api/user/admin', 
+            const response = await axios.post(`${backendUrl}/api/user/admin`, 
                 { email, password });
 
             // If login is successful, token will be returned and stored in localStorage
