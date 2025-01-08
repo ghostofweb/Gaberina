@@ -10,10 +10,9 @@ import orderRouter from './routes/orderRoute.js';
 
 // App Config
 const app = express();
-const port = 4000; 
 connectDB();
 connectCloudinary();
-
+const port = 4000
 // Middlewares
 app.use(express.json());
 
@@ -47,15 +46,13 @@ const authenticateJWT = (req, res, next) => {
 // API Endpoints
 app.use('/api/user', userRouter);
 app.use('/api/product', productRouter);
-app.use('/api/cart',cartRouter)
-app.use("/api/order",orderRouter)
+app.use('/api/cart', cartRouter);
+app.use('/api/order', orderRouter);
 
 app.post('/api/user/logout', (req, res) => {
-    // Handle token invalidation or session termination here (if applicable)
     res.json({ success: true, message: "Logged out successfully" });
-  });
+});
 
-  
 // Default endpoint
 app.get('/', (req, res) => {
     res.status(200).send('Hello World');
@@ -69,7 +66,9 @@ app.get('/api/user/authCheck', authenticateJWT, (req, res) => {
     });
 });
 
-// Start the server
-app.listen(port, () => {
+app.listen(port,()=>{
     console.log(`Server is running on port ${port}`);
-});
+})
+
+// Export the app (Required for Vercel)
+export default app;
