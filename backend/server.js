@@ -16,6 +16,9 @@ const port = 4000
 // Middlewares
 app.use(express.json());
 
+// CORS configuration to allow credentials (cookies)
+
+
 // Authentication Middleware for checking the token from Authorization header
 const authenticateJWT = (req, res, next) => {
     const token = req.headers.authorization?.split(" ")[1];  // Get token from the 'Authorization' header (format: Bearer <token>)
