@@ -17,7 +17,20 @@ const Cart = () => {
       localStorage.setItem('guestCart', JSON.stringify(updatedCart));
     }
   };
+  useEffect(() => {
+    const isPageReloaded = localStorage.getItem('pageReloaded');
 
+    if (!isPageReloaded) {
+      localStorage.setItem('pageReloaded', 'true');
+      document.location.reload();
+    }
+
+    // Cleanup after the page reloads to avoid infinite reload loop
+    return () => {
+      localStorage.removeItem('pageReloaded');
+    };
+  }, []);
+  
   const removeFromCart = (itemId, size) => {
     let updatedCart = structuredClone(cartItems); // Use structuredClone for deep copy
     if (updatedCart[itemId] && updatedCart[itemId][size]) {

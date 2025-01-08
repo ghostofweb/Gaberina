@@ -19,13 +19,26 @@ const Collection = () => {
       prev.includes(value) ? prev.filter((item) => item !== value) : [...prev, value]
     );
   };
-
+  
   const toggleSubCategory = (e) => {
     const value = e.target.value;
     setSubCategory((prev) =>
       prev.includes(value) ? prev.filter((item) => item !== value) : [...prev, value]
     );
   };
+  useEffect(() => {
+    const isPageReloaded = localStorage.getItem('pageReloadedcollection');
+
+    if (!isPageReloaded) {
+      localStorage.setItem('pageReloadedcollection', 'true');
+      document.location.reload();
+    }
+
+    // Cleanup after the page reloads to avoid infinite reload loop
+    return () => {
+      localStorage.removeItem('pageReloadedcollection');
+    };
+  }, []);
 
   const getFilteredProducts = () => {
     let productsCopy = [...products];
