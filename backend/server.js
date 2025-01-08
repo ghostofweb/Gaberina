@@ -16,18 +16,6 @@ const port = 4000
 // Middlewares
 app.use(express.json());
 
-// CORS configuration to allow credentials (cookies)
-app.use(cors({
-    origin: [
-        'http://localhost:5173',  // User frontend
-        'http://localhost:5174',
-        'https://gaberina-frontend.vercel.app'
-
-    ],
-    credentials: true, // Allow credentials (cookies) to be sent
-    methods: ['GET', 'POST', 'PUT', 'DELETE'], // Allow all necessary methods
-}));
-
 // Authentication Middleware for checking the token from Authorization header
 const authenticateJWT = (req, res, next) => {
     const token = req.headers.authorization?.split(" ")[1];  // Get token from the 'Authorization' header (format: Bearer <token>)
