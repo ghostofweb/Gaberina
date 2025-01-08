@@ -4,9 +4,9 @@ import { useNavigate } from 'react-router-dom'; // Import useNavigate
 import { ToastContainer, toast } from 'react-toastify'; // Import toast
 
 const Login = () => {
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
-    const navigate = useNavigate(); // Initialize the navigate function
+    const [email, setEmail] = useState('guest@gaberina.com');
+    const [password, setPassword] = useState('gaberina');
+
 
     const onSubmit = async (e) => {
         e.preventDefault();

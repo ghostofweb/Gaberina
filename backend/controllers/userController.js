@@ -143,13 +143,22 @@ const registerUser = async (req, res) => {
 const adminLogin = async (req, res) => {
     try {
         const { email, password } = req.body;
+
+        // Check if it's Admin Login
         if (email === process.env.ADMIN_EMAIL && password === process.env.ADMIN_PASSWORD) {
             const token = jwt.sign({ email, password }, process.env.JWT_SECRET);
-
-            res.json({ success: true, token });
-        } else {
-            res.status(400).json({ success: false, error: "Invalid Credentials" });
+            return res.json({ success: true, token });
         }
+        
+        // Check if it's Guest Admin Login
+        if (email === process.env.GUEST_ADMIN && password === process.env.GUEST_ADMIN_PASSWORD) {
+            const token = jwt.sign({ email, password }, process.env.JWT_SECRET);
+            return res.json({ success: true, token });
+        }
+
+        // Invalid credentials
+        return res.status(400).json({ success: false, error: "Invalid Credentials" });
+
     } catch (error) {
         console.error('Error in Admin Login:', error);
         res.status(500).json({
@@ -158,6 +167,7 @@ const adminLogin = async (req, res) => {
         });
     }
 };
+
 
 // Auth Check Route (use Authorization header to send the token)
 const authCheck = async (req, res) => {

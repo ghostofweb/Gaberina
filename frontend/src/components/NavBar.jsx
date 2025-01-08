@@ -144,12 +144,6 @@ const NavBar = () => {
               Orders
             </p>
             <p
-              onClick={() => navigate('/profile')}
-              className="cursor-pointer hover:text-champagne text-lg border-b border-white pb-3 transition duration-300 ease-in-out"
-            >
-              My Profile
-            </p>
-            <p
               onClick={logout}
               className="cursor-pointer hover:text-champagne text-lg border-b border-white pb-3 transition duration-300 ease-in-out"
             >
