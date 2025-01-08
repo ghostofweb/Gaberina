@@ -14,7 +14,7 @@ const NavBar = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const { setShowSearch , cartCount,token,setToken,setCartItems} = useContext(ShopContext);
-
+  const adminLink = "https://gaberina-yrai.vercel.app"
   const logout = ()=>{
     setToken(null)
     localStorage.removeItem("token")
@@ -54,58 +54,72 @@ const NavBar = () => {
 
       {/* Desktop nav links */}
       <ul className="hidden sm:flex gap-4 md:gap-9 text-sm md:text-base text-gold">
-        <NavLink
-          to="/"
-          className="flex flex-col items-center gap-1 group relative"
-        >
-          <p className="font-semibold transition-colors duration-200 ease-in-out group-hover:text-champagne">
-            HOME
-          </p>
-          <hr
-            className="w-2/4 border-none h-[1.5px] bg-gold transition-colors duration-200 ease-in-out"
-            style={getHrStyle("/")}
-          />
-        </NavLink>
+  <NavLink
+    to="/"
+    className="flex flex-col items-center gap-1 group relative"
+  >
+    <p className="font-semibold transition-colors duration-200 ease-in-out group-hover:text-champagne">
+      HOME
+    </p>
+    <hr
+      className="w-2/4 border-none h-[1.5px] bg-gold transition-colors duration-200 ease-in-out"
+      style={getHrStyle("/")}
+    />
+  </NavLink>
 
-        <NavLink
-          to="/collection"
-          className="flex flex-col items-center gap-1 group relative"
-        >
-          <p className="font-semibold transition-colors duration-200 ease-in-out group-hover:text-champagne">
-            COLLECTION
-          </p>
-          <hr
-            className="w-2/4 border-none h-[1.5px] bg-gold transition-colors duration-200 ease-in-out"
-            style={getHrStyle("/collection")}
-          />
-        </NavLink>
+  <NavLink
+    to="/collection"
+    className="flex flex-col items-center gap-1 group relative"
+  >
+    <p className="font-semibold transition-colors duration-200 ease-in-out group-hover:text-champagne">
+      COLLECTION
+    </p>
+    <hr
+      className="w-2/4 border-none h-[1.5px] bg-gold transition-colors duration-200 ease-in-out"
+      style={getHrStyle("/collection")}
+    />
+  </NavLink>
 
-        <NavLink
-          to="/about"
-          className="flex flex-col items-center gap-1 group relative"
-        >
-          <p className="font-semibold transition-colors duration-200 ease-in-out group-hover:text-champagne">
-            ABOUT
-          </p>
-          <hr
-            className="w-2/4 border-none h-[1.5px] bg-gold transition-colors duration-200 ease-in-out"
-            style={getHrStyle("/about")}
-          />
-        </NavLink>
+  <NavLink
+    to="/about"
+    className="flex flex-col items-center gap-1 group relative"
+  >
+    <p className="font-semibold transition-colors duration-200 ease-in-out group-hover:text-champagne">
+      ABOUT
+    </p>
+    <hr
+      className="w-2/4 border-none h-[1.5px] bg-gold transition-colors duration-200 ease-in-out"
+      style={getHrStyle("/about")}
+    />
+  </NavLink>
 
-        <NavLink
-          to="/contact"
-          className="flex flex-col items-center gap-1 group relative"
-        >
-          <p className="font-semibold transition-colors duration-200 ease-in-out group-hover:text-champagne">
-            CONTACT
-          </p>
-          <hr
-            className="w-2/4 border-none h-[1.5px] bg-gold transition-colors duration-200 ease-in-out"
-            style={getHrStyle("/contact")}
-          />
-        </NavLink>
-      </ul>
+  <NavLink
+    to="/contact"
+    className="flex flex-col items-center gap-1 group relative"
+  >
+    <p className="font-semibold transition-colors duration-200 ease-in-out group-hover:text-champagne">
+      CONTACT
+    </p>
+    <hr
+      className="w-2/4 border-none h-[1.5px] bg-gold transition-colors duration-200 ease-in-out"
+      style={getHrStyle("/contact")}
+    />
+  </NavLink>
+
+  <NavLink
+    to={adminLink}
+    className="flex flex-col items-center gap-1 group relative"
+  >
+    <p className="font-semibold transition-colors duration-200 ease-in-out group-hover:text-champagne">
+      ADMIN
+    </p>
+    <hr
+      className="w-2/4 border-none h-[1.5px] bg-gold transition-colors duration-200 ease-in-out"
+      style={getHrStyle("/admin")}
+    />
+  </NavLink>
+</ul>
+
 
       <div className="flex items-center gap-4 md:gap-6">
         {/* Search icon */}
