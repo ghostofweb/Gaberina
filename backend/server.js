@@ -20,7 +20,9 @@ app.use(express.json());
 app.use(cors({
     origin: [
         'http://localhost:5173',  // User frontend
-        'http://localhost:5174'   // Admin frontend
+        'http://localhost:5174',
+        'https://gaberina-frontend.vercel.app/'
+
     ],
     credentials: true, // Allow credentials (cookies) to be sent
     methods: ['GET', 'POST', 'PUT', 'DELETE'], // Allow all necessary methods
