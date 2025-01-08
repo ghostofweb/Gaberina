@@ -4,7 +4,7 @@ import { assets } from '../assets/assets'
 import Title from '../components/Title'
 import ProductItem from '../components/ProductItem'
 import SearchBar from '../components/SearchBar'
-
+import 'react-toastify/dist/ReactToastify.css'
 const Collection = () => {
   const { products, search } = useContext(ShopContext);
   const [showFilter, setShowFilter] = useState(false);

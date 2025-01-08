@@ -5,7 +5,7 @@ import { ShopContext } from '../context/ShopContext';
 import axios from 'axios';
 import { toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
-
+import 'react-toastify/dist/ReactToastify.css'
 const Login = () => {
   const [currentState, setCurrentState] = useState("login");
   const [showPassword, setShowPassword] = useState(false);

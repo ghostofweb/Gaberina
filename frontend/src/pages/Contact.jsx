@@ -2,7 +2,7 @@ import React from 'react';
 import { assets } from '../assets/assets';
 import { motion } from 'framer-motion';
 import NewsLetterBox from '../components/NewsLetterBox';
-
+import 'react-toastify/dist/ReactToastify.css'
 const Contact = () => {
   return (
     <div className="bg-[#1E1E1E] text-[#FFF8E7]">

@@ -3,7 +3,7 @@ import Title from "../components/Title";
 import { assets } from '../assets/assets';
 import NewsLetterBox from '../components/NewsLetterBox';
 import { motion } from 'framer-motion';
-
+import 'react-toastify/dist/ReactToastify.css'
 const About = () => {
   const [hasAnimated, setHasAnimated] = useState(false);
 

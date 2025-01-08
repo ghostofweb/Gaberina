@@ -15,7 +15,8 @@ const ShopContextProvider = ({ children }) => {
   const [showSearch, setShowSearch] = useState(true);
   const [products, setProducts] = useState([]);
   const [token, setToken] = useState(localStorage.getItem("token") || "");
-  
+
+  // Fetch cart from DB if logged in, else from localStorage
   useEffect(() => {
     if (token) {
       fetchCartFromDB();
@@ -25,22 +26,25 @@ const ShopContextProvider = ({ children }) => {
     }
   }, [token]);
 
+  // Update the total whenever the cart items change
   useEffect(() => {
     setTotal(calculateTotal(cartItems));
   }, [cartItems]);
 
+  // Get product data on initial load
   useEffect(() => {
     getProductsData();
   }, []);
 
+  // Update cart in localStorage or DB depending on user login status
   useEffect(() => {
     if (token) {
       updateCartInDB(cartItems);
     } else {
-      localStorage.setItem("guestCart", JSON.stringify(cartItems));
+      saveCartForGuest(cartItems);
     }
   }, [cartItems, token]);
-  
+
   const calculateTotal = (cartData) => {
     let subtotal = 0;
     for (const itemId in cartData) {
@@ -94,63 +98,70 @@ const ShopContextProvider = ({ children }) => {
 
   const addToCart = async (itemId, size) => {
     if (!size) {
-        toast.error('Please select the size', {
-            position: 'top-right',
-            className: 'custom-toast',
-            style: {
-                backgroundColor: '#1E1E1E', // Dark Charcoal background
-                color: '#FDFBF6', // Button text color
-                borderLeft: '5px solid #BFA253', // Champagne accent color
-            },
-        });
+      toast.error("Please select the size", {
+        position: "top-right",
+        className: "custom-toast",
+        style: {
+          backgroundColor: "#1E1E1E", // Dark Charcoal background
+          color: "#FDFBF6", // Button text color
+          borderLeft: "5px solid #BFA253", // Champagne accent color
+        },
+      });
       return;
     }
 
+    // Clone cart data before modifying
     const cartData = structuredClone(cartItems);
     const product = products.find((prod) => prod._id === itemId);
 
+    // Update cart state with new item
     if (cartData[itemId]) {
       cartData[itemId][size] = (cartData[itemId][size] || 0) + 1;
     } else {
       cartData[itemId] = { [size]: 1 };
     }
 
+    // Update state first
     setCartItems(cartData);
+
+    // After state update, handle async actions (DB or localStorage)
     if (token) {
-      await updateCartInDB(cartData);
+      await updateCartInDB(cartData); // Update cart in DB for logged-in users
     } else {
-      saveCartForGuest(cartData);
+      saveCartForGuest(cartData); // Save cart to localStorage for guest users
     }
 
+    // Now, show success toast
     toast.success(
-        <div style={{ display: 'flex', alignItems: 'center' }}>
-            <img
-                src={product.image[0]}
-                alt={product.name}
-                style={{ width: '40px', height: '40px', marginRight: '10px' }}
-            />
-            <div>
-                <strong>{product.name}</strong><br />
-                <span>Size: {size}</span>
-            </div>
-        </div>,
-        {
-            position: 'top-right',
-            autoClose: 3000,
-            hideProgressBar: true,
-            closeOnClick: true,
-            pauseOnHover: true,
-            draggable: true,
-            style: {
-                backgroundColor: '#1E1E1E',
-                color: '#FDFBF6',
-                fontFamily: 'Lato, sans-serif',
-                border: '1px solid #D4AF37CC',
-                borderRadius: '8px',
-                padding: '10px',
-            },
-            icon: '🛒',
-        }
+      <div style={{ display: "flex", alignItems: "center" }}>
+        <img
+          src={product.image[0]}
+          alt={product.name}
+          style={{ width: "40px", height: "40px", marginRight: "10px" }}
+        />
+        <div>
+          <strong>{product.name}</strong>
+          <br />
+          <span>Size: {size}</span>
+        </div>
+      </div>,
+      {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: true,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        style: {
+          backgroundColor: "#1E1E1E",
+          color: "#FDFBF6",
+          fontFamily: "Lato, sans-serif",
+          border: "1px solid #D4AF37CC",
+          borderRadius: "8px",
+          padding: "10px",
+        },
+        icon: "🛒",
+      }
     );
     console.log(cartData);
   };
@@ -168,11 +179,21 @@ const ShopContextProvider = ({ children }) => {
     }
 
     setCartItems(cartData);
+
     if (token) {
       await updateCartInDB(cartData);
     } else {
       saveCartForGuest(cartData);
     }
+
+    toast.success("Item removed from cart", {
+      position: "top-right",
+      className: "custom-toast",
+      style: {
+        backgroundColor: "#1E1E1E",
+        color: "#FDFBF6",
+      },
+    });
   };
 
   const clearCart = async () => {
@@ -182,12 +203,23 @@ const ShopContextProvider = ({ children }) => {
     } else {
       saveCartForGuest({});
     }
+
+    toast.success("Cart cleared", {
+      position: "top-right",
+      className: "custom-toast",
+      style: {
+        backgroundColor: "#1E1E1E",
+        color: "#FDFBF6",
+      },
+    });
   };
 
   const cartCount = useMemo(() => {
-    return Object.values(cartItems).reduce((total, itemSizes) => {
-      return total + Object.values(itemSizes).reduce((sizeTotal, count) => sizeTotal + count, 0);
-    }, 0);
+    return Object.values(cartItems).reduce(
+      (total, itemSizes) =>
+        total + Object.values(itemSizes).reduce((sizeTotal, count) => sizeTotal + count, 0),
+      0
+    );
   }, [cartItems]);
 
   const getProductsData = async () => {

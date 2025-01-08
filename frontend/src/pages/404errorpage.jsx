@@ -2,7 +2,7 @@ import React from 'react';
 import { Button, Container, Typography, Box } from '@mui/material';
 import { Link } from 'react-router-dom';
 import Title from '../components/Title'; // Assuming you already have this component
-
+import 'react-toastify/dist/ReactToastify.css'
 const NotFound = () => {
   return (
     <Container

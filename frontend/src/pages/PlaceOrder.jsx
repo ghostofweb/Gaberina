@@ -7,7 +7,7 @@ import CODLogo from "../assets/cash-on-delivery.png";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-
+import 'react-toastify/dist/ReactToastify.css'
 const PlaceOrder = () => {
   const { cartItems, currency, products, backendUrl, token, setCartItems } = useContext(ShopContext);
   const navigate = useNavigate();

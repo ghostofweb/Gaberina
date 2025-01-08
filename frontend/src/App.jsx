@@ -11,16 +11,17 @@ import PlaceOrder from "./pages/PlaceOrder";
 import NavBar from "./components/NavBar";
 import Footer from "./components/Footer";
 import SearchBar from "./components/SearchBar";
-import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
 import Orders from "./pages/Orders";
 import NotFound from "./pages/404errorpage";
+import { ToastContainer } from "react-toastify";
+import 'react-toastify/dist/ReactToastify.css';
 
 export default function App() {
   return (
+
     <div className="bg-dark">
+    <ToastContainer/>
       <div className="px-4 sm:px-[5vw] md:px-[7vw] lg:px-[9vw]">
-        <ToastContainer/>
         <NavBar />
         <SearchBar />
         <Routes>
@@ -33,11 +34,11 @@ export default function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/place-order" element={<PlaceOrder />} />
           <Route path="/orders" element={<Orders />} />
-          <Route path="*" element={<NotFound/>} />
+          <Route path="*" element={<NotFound />} />
         </Routes>
-        <Footer/>
+        <Footer />
       </div>
- 
+   
     </div>
   );
 }

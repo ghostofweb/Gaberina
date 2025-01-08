@@ -4,7 +4,7 @@ import Title from '../components/Title';
 import { toast } from 'react-toastify';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
-
+import 'react-toastify/dist/ReactToastify.css'
 const Orders = () => {
   const { backendUrl, currency, token } = useContext(ShopContext);
   const [ordersData, setOrdersData] = useState([]);

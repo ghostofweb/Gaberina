@@ -4,6 +4,7 @@ import { ShopContext } from '../context/ShopContext';
 import { assets } from '../assets/assets';
 import Title from '../components/Title';
 import RelatedProducts from '../components/RelatedProducts';
+import 'react-toastify/dist/ReactToastify.css'
 const Product = () => {
   const { productId } = useParams();
   const { products, currency, cartItems, addToCart } = useContext(ShopContext);
@@ -50,6 +51,7 @@ const Product = () => {
     if (selectedSize) {
       addToCart(productData._id, selectedSize);
     }
+    document.location.reload();
   };
 
   return (

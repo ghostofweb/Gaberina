@@ -64,27 +64,29 @@ const Cart = () => {
   const calculateTotal = () => {
     return calculateSubtotal() + calculateShipping();
   };
+
   const handleCheckout = () => {
     if (!token) {
-       toast.error("Please Log In to Make Order", {
-              position: "top-right",
-              className: "custom-toast",
-              style: {
-                backgroundColor: "#1E1E1E",
-                color: "#FDFBF6",
-                borderLeft: "5px solid #BFA253",
-              },
-            });
-            return
+      toast.error('Please Log In to Make Order', {
+        position: 'top-right',
+        className: 'custom-toast',
+        style: {
+          backgroundColor: '#1E1E1E',
+          color: '#FDFBF6',
+          borderLeft: '5px solid #BFA253',
+        },
+      });
+      return;
     }
+
     if (Object.keys(cartItems).length === 0) {
       toast.error('Your cart is empty. Please select products before checking out.', {
         position: 'top-right',
         className: 'custom-toast',
         style: {
-          backgroundColor: '#1E1E1E', // Dark Charcoal background
-          color: '#CFC4B9', // Gold text color
-          borderLeft: '5px solid #BFA253', // Champagne accent color
+          backgroundColor: '#1E1E1E',
+          color: '#CFC4B9',
+          borderLeft: '5px solid #BFA253',
         },
       });
       return; // Don't navigate if cart is empty

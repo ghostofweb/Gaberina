@@ -5,10 +5,10 @@ import Features from '../components/Features'
 import NewsLetterBox from '../components/NewsLetterBox'
 import LatestCollection from '../components/BestSeller'
 import { ShopContext } from '../context/ShopContext'
-
+import 'react-toastify/dist/ReactToastify.css'
 const Home = () => {
   return (
-    <div>
+<div>
 <Hero/>
 <Hero2/>
 <LatestCollection/>
