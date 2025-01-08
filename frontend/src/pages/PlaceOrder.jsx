@@ -76,15 +76,13 @@ const PlaceOrder = () => {
         position: "top-right",
         className: "custom-toast",
         style: {
-          backgroundColor: "#1E1E1E", // Dark Charcoal background
-          color: "#FDFBF6", // Button text color
-          borderLeft: "5px solid #BFA253", // Champagne accent color
+          backgroundColor: "#1E1E1E",
+          color: "#FDFBF6",
+          borderLeft: "5px solid #BFA253",
         },
       });
       return;
     }
-    
-
 
     // Log products with quantity
     const orderItem = Object.keys(cartItems).flatMap((itemId) => {
@@ -100,47 +98,69 @@ const PlaceOrder = () => {
     });
 
     let orderData = {
-      address:formData,
-      items:orderItem,
-      amount:calculateTotal(),
+      address: formData,
+      items: orderItem,
+      amount: calculateTotal(),
     }
 
-    switch(selectedPayment){
-      // Cash On Devliery
-      case 'cod':
+    // Handle different payment methods
+    if (selectedPayment === 'google-pay' || selectedPayment === 'paytm') {
+      toast.info(`Payment transaction via ${selectedPayment === 'google-pay' ? 'Google Pay' : 'Paytm'} is not available for demo`, {
+        position: "top-right",
+        className: "custom-toast",
+        style: {
+          backgroundColor: "#1E1E1E",
+          color: "#FDFBF6",
+          borderLeft: "5px solid #BFA253",
+        },
+      });
+      return;
+    }
+
+    // Process COD order
+    if (selectedPayment === 'cod') {
+      try {
         const response = await axios.post(`${backendUrl}/api/order/place`, orderData, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
         });
+        
         if (response.data.success) {
           setCartItems({});
-          navigate('/orders')
           toast.success("Order placed successfully", {
             position: "top-right",
             className: "custom-toast",
             style: {
-              backgroundColor: "#1E1E1E", // Dark Charcoal background
-              color: "#FDFBF6", // Button text color
-              borderLeft: "5px solid #BFA253", // Champagne accent color
-              },
-              });
-        }else{
+              backgroundColor: "#1E1E1E",
+              color: "#FDFBF6",
+              borderLeft: "5px solid #BFA253",
+            },
+          });
+          navigate('/orders');
+        } else {
           toast.error("Failed to place order", {
             position: "top-right",
             className: "custom-toast",
             style: {
-              backgroundColor: "#1E1E1E", // Dark Charcoal background
-              color: "#FDFBF6", // Button text color
-              },
-              });
+              backgroundColor: "#1E1E1E",
+              color: "#FDFBF6",
+              borderLeft: "5px solid #BFA253",
+            },
+          });
         }
-      break;
-      default:
-        break
+      } catch (error) {
+        toast.error("Error placing order", {
+          position: "top-right",
+          className: "custom-toast",
+          style: {
+            backgroundColor: "#1E1E1E",
+            color: "#FDFBF6",
+            borderLeft: "5px solid #BFA253",
+          },
+        });
+      }
     }
-
-    navigate("/orders");
   };
 
   const calculateSubtotal = () => {

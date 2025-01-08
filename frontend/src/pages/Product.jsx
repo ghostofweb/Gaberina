@@ -149,12 +149,13 @@ const Product = () => {
           <p className="border px-5 py-3 text-sm text-buttontxt">Review (122)</p>
         </div>
         <div className="flex flex-col gap-4 border px-6 py-6 text-sm text-buttontxt mt-5 bg-lighterDark">
-          <p>
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla quam velit, vulputate eu pharetra nec, mattis ac neque.
-          </p>
-          <p>
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla quam velit, vulputate eu pharetra nec, mattis ac neque.
-          </p>
+        <p>
+    Indulge in the luxurious essence of Gaberina, where every fragrance is crafted to embody the divine. Each scent is a harmonious blend of rare notes, designed to evoke a sense of elegance and allure. Whether you're looking for a scent to elevate your everyday moments or one to accompany you on special occasions, Gaberina offers an exquisite collection tailored to your every desire.
+</p>
+<p>
+    At Gaberina, we believe that fragrance is not just a scent, but an experience. Our perfumes are more than just a blend of notes—they are a journey into a world of timeless beauty and luxury. From the first spritz to the lingering trail, each perfume is carefully crafted to make every moment unforgettable. Discover your signature scent today and let Gaberina become a part of your story.
+</p>
+
         </div>
       </div>
 
