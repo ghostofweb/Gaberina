@@ -33,6 +33,18 @@ const PlaceOrder = () => {
   };
 
   const handlePlaceOrder = async () => {
+    if (!token) {
+      toast.error("Please Log In to Make Order", {
+        position: "top-right",
+        className: "custom-toast",
+        style: {
+          backgroundColor: "#1E1E1E",
+          color: "#FDFBF6",
+          borderLeft: "5px solid #BFA253",
+        },
+      });
+      return;
+    }
     if (Object.keys(cartItems).length === 0) {
       toast.error("Please add something to the cart", {
         position: "top-right",

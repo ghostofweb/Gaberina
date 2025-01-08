@@ -32,7 +32,9 @@ const App = () => {
                     Authorization: `Bearer ${token}`, // Send token in Authorization header
                 }
             });
-            console.log("Auth check response:", response.data);
+            if(response.data.success){
+                console.log("User is authenticated");
+            }
         } catch (error) {
             console.error("Authentication check failed:", error);
             setToken(''); // If auth fails, clear the token
@@ -51,6 +53,7 @@ const App = () => {
                 <Login />
             ) : (
                 <>
+                <ToastContainer />
                     <NavBar onLogout={handleLogout}/>
                     <hr className='px-4' />
                     <div className='flex w-full'>

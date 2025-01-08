@@ -20,7 +20,7 @@ const ShopContextProvider = ({ children }) => {
     if (token) {
       fetchCartFromDB();
     } else {
-      const savedCart = JSON.parse(localStorage.getItem("guestCart")) || {}; // For guest users
+      const savedCart = JSON.parse(localStorage.getItem("guestCart")) || {};
       setCartItems(savedCart);
     }
   }, [token]);
@@ -35,7 +35,9 @@ const ShopContextProvider = ({ children }) => {
 
   useEffect(() => {
     if (token) {
-      updateCartInDB(cartItems);  // Sync cart with backend when cartItems change
+      updateCartInDB(cartItems);
+    } else {
+      localStorage.setItem("guestCart", JSON.stringify(cartItems));
     }
   }, [cartItems, token]);
   

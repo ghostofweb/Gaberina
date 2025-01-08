@@ -1,6 +1,7 @@
 import axios from 'axios';
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom'; // Import useNavigate
+import { ToastContainer, toast } from 'react-toastify'; // Import toast
 
 const Login = () => {
     const [email, setEmail] = useState('');
@@ -10,6 +11,12 @@ const Login = () => {
     const onSubmit = async (e) => {
         e.preventDefault();
 
+        // Check if both fields are filled
+        if (!email || !password) {
+            toast.error("Please fill in all fields.");
+            return;
+        }
+
         try {
             const response = await axios.post('http://localhost:4000/api/user/admin', 
                 { email, password });
@@ -17,13 +24,14 @@ const Login = () => {
             // If login is successful, token will be returned and stored in localStorage
             if (response.data.success) {
                 localStorage.setItem("token", response.data.token);  // Store token in localStorage
-                console.log('Login successful');
+                toast.success("Login successful!");
                 window.location.reload();  // Refresh the page
             } else {
-                console.error('Invalid credentials');
+                toast.error("Invalid credentials. Please try again.");
             }
         } catch (error) {
             console.error('Error during login', error);
+            toast.error(`${error.response.data.error}`);
         }
     };
 
@@ -62,6 +70,7 @@ const Login = () => {
                     </button>
                 </form>
             </div>
+            <ToastContainer /> {/* Add ToastContainer to show the toasts */}
         </div>
     );
 };

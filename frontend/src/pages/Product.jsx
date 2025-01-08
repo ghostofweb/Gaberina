@@ -3,7 +3,7 @@ import { useParams } from 'react-router-dom';
 import { ShopContext } from '../context/ShopContext';
 import { assets } from '../assets/assets';
 import Title from '../components/Title';
-
+import RelatedProducts from '../components/RelatedProducts';
 const Product = () => {
   const { productId } = useParams();
   const { products, currency, cartItems, addToCart } = useContext(ShopContext);
@@ -159,22 +159,9 @@ const Product = () => {
       </div>
 
       {/* Cart Items Section (To display cart items that are already added) */}
-      <div className="mt-12">
-        <h3 className="text-xl font-bold text-gold">Items in Cart</h3>
-        <div>
-          {Object.keys(cartItems).map((itemId) => {
-            const product = products.find((prod) => prod._id === itemId);
-            if (product) {
-              return Object.keys(cartItems[itemId]).map((size) => (
-                <div key={`${itemId}-${size}`} className="flex justify-between mt-4">
-                  <p>{product.name} ({size})</p>
-                  <p>{currency}{product.price[size]} x {cartItems[itemId][size]}</p>
-                </div>
-              ));
-            }
-            return null;
-          })}
-        </div>
+      <div className='py-6'>
+      <Title text1={"RELATED"} text2={'PRODUCT'}/>
+      <RelatedProducts category={productData.category}/>
       </div>
     </div>
   );

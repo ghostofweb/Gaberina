@@ -7,31 +7,30 @@ import Title from '../components/Title';
 import { useNavigate } from 'react-router-dom';
 
 const Cart = () => {
-  const { products, currency, cartItems, setCartItems } = useContext(ShopContext);
-  const navigate = useNavigate(); // For programmatic navigation
-
-  // Use the cartItems directly from context
-  useEffect(() => {
-    setCartItems(cartItems); // Initialize with context's cartItems
-  }, [cartItems, setCartItems]);
+  const { products, currency, cartItems, setCartItems, token } = useContext(ShopContext);
+  const navigate = useNavigate();
 
   const saveCartData = (updatedCart) => {
-    setCartItems(updatedCart);  // Update cart in context
+    setCartItems(updatedCart);
+    // Save to localStorage for guest users
+    if (!token) {
+      localStorage.setItem('guestCart', JSON.stringify(updatedCart));
+    }
   };
 
   const removeFromCart = (itemId, size) => {
-    let updatedCart = { ...cartItems };
+    let updatedCart = structuredClone(cartItems); // Use structuredClone for deep copy
     if (updatedCart[itemId] && updatedCart[itemId][size]) {
       delete updatedCart[itemId][size];
       if (Object.keys(updatedCart[itemId]).length === 0) {
         delete updatedCart[itemId];
       }
     }
-    saveCartData(updatedCart);  // Use this to update the cart without reload
+    saveCartData(updatedCart);
   };
 
   const updateQuantity = (itemId, size, increment) => {
-    let updatedCart = { ...cartItems };
+    let updatedCart = structuredClone(cartItems); // Use structuredClone for deep copy
     if (updatedCart[itemId] && updatedCart[itemId][size]) {
       updatedCart[itemId][size] += increment;
 
@@ -42,7 +41,7 @@ const Cart = () => {
         }
       }
     }
-    saveCartData(updatedCart);  // Save the updated cart data
+    saveCartData(updatedCart);
   };
 
   const calculateSubtotal = () => {
@@ -65,8 +64,19 @@ const Cart = () => {
   const calculateTotal = () => {
     return calculateSubtotal() + calculateShipping();
   };
-
   const handleCheckout = () => {
+    if (!token) {
+       toast.error("Please Log In to Make Order", {
+              position: "top-right",
+              className: "custom-toast",
+              style: {
+                backgroundColor: "#1E1E1E",
+                color: "#FDFBF6",
+                borderLeft: "5px solid #BFA253",
+              },
+            });
+            return
+    }
     if (Object.keys(cartItems).length === 0) {
       toast.error('Your cart is empty. Please select products before checking out.', {
         position: 'top-right',

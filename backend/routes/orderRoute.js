@@ -6,8 +6,8 @@ import authUser from "../middleware/auth.js"
 const orderRouter = express.Router();
 
 //ADMIN FEATURES
-orderRouter.post("list",adminAuth,allOrders)
-orderRouter.post("status",adminAuth,updateStatus)
+orderRouter.post("/list",adminAuth,allOrders)
+orderRouter.post("/status",adminAuth,updateStatus)
 
 
 //Payment feature
@@ -16,7 +16,7 @@ orderRouter.post("/gpay",authUser,placeOrderGpay)
 orderRouter.post("/paytm",authUser,placeOrderPaytm)
 
 // User Feature
-orderRouter.post("/userorder",authUser,userOrders)
+orderRouter.post("/userorders",authUser,userOrders)
 
 export default orderRouter
 

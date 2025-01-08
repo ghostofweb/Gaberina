@@ -14,6 +14,7 @@ import SearchBar from "./components/SearchBar";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Orders from "./pages/Orders";
+import NotFound from "./pages/404errorpage";
 
 export default function App() {
   return (
@@ -32,7 +33,7 @@ export default function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/place-order" element={<PlaceOrder />} />
           <Route path="/orders" element={<Orders />} />
-          <Route path="*" element={<div>nothing here</div>} />
+          <Route path="*" element={<NotFound/>} />
         </Routes>
         <Footer/>
       </div>
