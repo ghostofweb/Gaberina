@@ -249,6 +249,13 @@ const NavBar = () => {
           >
             CONTACT
           </NavLink>
+          <NavLink
+            onClick={() => setVisible(false)}
+            className="py-2 pl-6 hover:text-champagne transition-colors duration-200 ease-in-out"
+            to={adminLink}
+          >
+            ADMIN
+          </NavLink>
         </div>
       </div>
     </div>
