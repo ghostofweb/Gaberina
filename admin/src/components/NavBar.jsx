@@ -7,30 +7,10 @@ const NavBar = ({ onLogout, isAdmin }) => {
   const navigate = useNavigate();  // For redirecting after logout
 
   const handleLogout = async () => {
-    try {
-      // Call the backend to logout and invalidate the token
-      const response = await axios.post('http://localhost:4000/api/user/logout', {}, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem('token')}`
-        }
-      });
-
-      if (response.data.success) {
         // Remove the token from localStorage
         localStorage.removeItem('token');
-        console.log('Logged out successfully');
-        
-        // Trigger logout callback passed from App
-        onLogout();
-        
-        // Optionally, redirect to login page
-      } else {
-        console.error('Logout failed');
-      }
-    } catch (error) {
-      console.error('Error during logout:', error);
-    }
-  };
+  }
+
 
   return (
     <div className='flex items-center py-2 px-[4%] justify-between'>
