@@ -29,7 +29,7 @@ const List = () => {
   const deleteProduct = async () => {
     try {
       const id = productToDelete;
-      const response = await axios.post(`${backendUrl}/api/products/remove`, {id}, {
+      const response = await axios.post(`${backendUrl}/api/product/remove`, {id}, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem('token')}`
         }
