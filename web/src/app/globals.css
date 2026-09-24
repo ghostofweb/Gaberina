@@ -1,0 +1,162 @@
+@import "tailwindcss";
+@import "lenis/dist/lenis.css";
+
+@theme {
+  --color-noir: #0c0b0a;
+  --color-smoke: #171513;
+  --color-ash: #221f1c;
+  --color-ivory: #ede6da;
+  --color-taupe: #8e867b;
+  --color-champagne: #c6a15b;
+
+  --ease-luxe: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-silk: cubic-bezier(0.76, 0, 0.24, 1);
+}
+
+@theme inline {
+  --font-display: var(--font-cormorant), "Times New Roman", serif;
+  --font-sans: var(--font-manrope), system-ui, sans-serif;
+}
+
+:root {
+  color-scheme: dark;
+  --gutter: clamp(1rem, 3.2vw, 3rem);
+  --header-h: 5.25rem;
+}
+
+html {
+  background: var(--color-noir);
+}
+
+body {
+  background: var(--color-noir);
+  color: var(--color-ivory);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+/* A barely-there scroll bar: a thin champagne thread, no track. */
+html {
+  scrollbar-width: thin;
+  scrollbar-color: color-mix(in oklab, var(--color-champagne) 45%, transparent) transparent;
+}
+::-webkit-scrollbar {
+  width: 4px;
+  height: 4px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: color-mix(in oklab, var(--color-champagne) 45%, transparent);
+  border-radius: 9999px;
+}
+
+::selection {
+  background: var(--color-champagne);
+  color: var(--color-noir);
+}
+
+/* Hide the native cursor only when our custom cursor is active (fine pointers). */
+@media (hover: hover) and (pointer: fine) {
+  html.has-cursor,
+  html.has-cursor * {
+    cursor: none !important;
+  }
+}
+
+:focus-visible {
+  outline: 1px solid var(--color-champagne);
+  outline-offset: 4px;
+}
+
+@utility gutter {
+  padding-inline: var(--gutter);
+}
+
+/* Small uppercase label used for UI chrome and eyebrows. */
+@utility label {
+  font-family: var(--font-sans);
+  font-size: 0.6875rem;
+  line-height: 1.2;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  font-weight: 500;
+}
+
+@utility hairline {
+  background: color-mix(in oklab, var(--color-ivory) 14%, transparent);
+  height: 1px;
+}
+
+/* Animated underline for text links. */
+@utility link-underline {
+  background-image: linear-gradient(currentColor, currentColor);
+  background-size: 0% 1px;
+  background-position: 100% 100%;
+  background-repeat: no-repeat;
+  transition: background-size 0.6s var(--ease-luxe);
+  &:hover,
+  &:focus-visible {
+    background-size: 100% 1px;
+    background-position: 0% 100%;
+  }
+}
+
+/* ------------------------------------------------------------------ Grain */
+.grain {
+  position: fixed;
+  inset: -50%;
+  z-index: 60;
+  pointer-events: none;
+  opacity: 0.07;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0.9 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  animation: grain 0.9s steps(6) infinite;
+}
+
+@keyframes grain {
+  0% { transform: translate(0, 0); }
+  20% { transform: translate(-3%, 2%); }
+  40% { transform: translate(2%, -4%); }
+  60% { transform: translate(-4%, -1%); }
+  80% { transform: translate(3%, 3%); }
+  100% { transform: translate(0, 0); }
+}
+
+/* ------------------------------------------------------------ Light leaks */
+.light-leak {
+  position: absolute;
+  border-radius: 9999px;
+  filter: blur(80px);
+  mix-blend-mode: screen;
+  pointer-events: none;
+  animation: drift 18s var(--ease-silk) infinite alternate;
+}
+
+@keyframes drift {
+  0% { transform: translate3d(0, 0, 0) scale(1); opacity: 0.55; }
+  50% { opacity: 0.8; }
+  100% { transform: translate3d(6vw, -4vh, 0) scale(1.25); opacity: 0.45; }
+}
+
+@keyframes kenburns {
+  from { transform: scale(1.02) translate3d(0, 0, 0); }
+  to { transform: scale(1.12) translate3d(-1.5%, -1%, 0); }
+}
+
+@keyframes scroll-cue {
+  0% { transform: scaleY(0); transform-origin: top; }
+  45% { transform: scaleY(1); transform-origin: top; }
+  55% { transform: scaleY(1); transform-origin: bottom; }
+  100% { transform: scaleY(0); transform-origin: bottom; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .grain,
+  .light-leak,
+  [data-kenburns],
+  [data-scroll-cue] {
+    animation: none !important;
+  }
+}

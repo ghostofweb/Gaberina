@@ -22,7 +22,9 @@ app.use(cors({
         'http://localhost:5173',  // User frontend
         'http://localhost:5174',
         'https://gaberina.vercel.app',
-        'https://gaberina-yrai.vercel.app'
+        'https://gaberina-yrai.vercel.app',
+        'http://localhost:3200',  // New Next.js storefront (web/) in development
+        // TODO: add the new storefront's live domain here when it's deployed
 
     ],
     credentials: true, // Allow credentials (cookies) to be sent
