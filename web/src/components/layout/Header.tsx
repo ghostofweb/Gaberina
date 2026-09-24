@@ -6,6 +6,7 @@ import { useRef, useState } from "react";
 import { Wordmark } from "@/components/brand/Wordmark";
 import { gsap, MOTION_OK, ScrollTrigger, useGSAP } from "@/lib/gsap";
 import { onIntroComplete } from "@/lib/intro";
+import { useAuth } from "@/lib/auth/AuthProvider";
 import { useBag } from "@/lib/bag/BagProvider";
 import { AccountMenu } from "./AccountMenu";
 import { MenuOverlay } from "./MenuOverlay";
@@ -24,6 +25,7 @@ export function Header() {
   const pathname = usePathname();
   const isHome = pathname === "/";
   const { count: bagCount, setOpen: setBagOpen } = useBag();
+  const { signedIn } = useAuth();
   const seenCount = useRef<number | null>(null);
 
   // Letters rise into place once the preloader lifts. contextSafe keeps these tweens in this
@@ -175,6 +177,19 @@ export function Header() {
             <div data-header-ui className="hidden md:block">
               <AccountMenu />
             </div>
+            {/* Mobile: a compact account icon (the full menu lives on larger screens). */}
+            <Link
+              data-header-ui
+              href={signedIn ? "/orders" : "/login"}
+              aria-label={signedIn ? "Your account and orders" : "Sign in"}
+              className="relative md:hidden"
+            >
+              <svg viewBox="0 0 24 24" className="size-[18px]" fill="none" stroke="currentColor" strokeWidth="1.1">
+                <circle cx="12" cy="8" r="4" />
+                <path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6" />
+              </svg>
+              {signedIn && <span aria-hidden className="absolute -top-0.5 -right-1 size-1.5 rounded-full bg-champagne" />}
+            </Link>
             <button
               data-header-ui
               data-bag-target
